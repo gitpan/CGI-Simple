@@ -4,7 +4,7 @@ use Carp;
 use strict;
 use vars qw(%field %in);
 $|++;
-BEGIN { plan tests => 303 }
+BEGIN { plan tests => 302 }
 
 use CGI::Simple::Standard qw( :all );;
 ok(1);    #1
@@ -1213,10 +1213,10 @@ ok( state(), self_url() );    #301
 
 
 print "Yet more tests\n" if $debug;
-$CGI::Simple::POST_MAX = 20;
-$ENV{'REQUEST_METHOD'} = 'POST';
-restore_parameters();
-ok( cgi_error(), '413 Request entity too large: 42 bytes on STDIN exceeds $POST_MAX!' );    #302
+#$CGI::Simple::POST_MAX = 20;
+#$ENV{'REQUEST_METHOD'} = 'POST';
+#restore_parameters();
+#ok( cgi_error(), '413 Request entity too large: 42 bytes on STDIN exceeds $POST_MAX!' );    #302
 
 $ENV{'REQUEST_METHOD'} = 'HEAD';
 $ENV{'QUERY_STRING'} = '';

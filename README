@@ -1,5 +1,5 @@
-CGI/Simple version 0.01
-=======================
+CGI/Simple
+==========
 
 NAME
 
@@ -7,10 +7,11 @@ CGI::Simple - A Simple totally OO CGI interface that is CGI.pm compliant
 
 IMPORTANT NOTE
 
-This is a pre-release beta. It has a extensive test suite that proves its
-compatibility with CGI.pm but has yet to be widely tested and as such should
-not be used in a production environment. Please see the pod or the html version
-of this in the /html directory for full details.
+This is a beta. It has a extensive test suite that proves its
+compatibility with CGI.pm. It has had reasonably widespread use but as always
+all care but no responsibility. YMMV. Please see the pod or the html version
+of this in the /html directory for full details. This file gets looked at rarely
+see the POD and CHANGES for more details.
 
 TESTING NOTE
 

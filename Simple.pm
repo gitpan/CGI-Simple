@@ -2,14 +2,14 @@ package CGI::Simple;
 require 5.004;
 # this module is both strict (and warnings) compliant, but they are only used
 # in testing as they add an unnecessary compile time overhead in production.
-# use strict;
+use strict;
 use Carp;
-use SelfLoader;   # comment this and the __DATA__ token out under mod_perl
+#use SelfLoader;   # comment this and the __DATA__ token out under mod_perl
 use vars qw( $VERSION $USE_CGI_PM_DEFAULTS $DISABLE_UPLOADS $POST_MAX
              $NO_UNDEF_PARAMS $USE_PARAM_SEMICOLONS $HEADERS_ONCE
              $NPH $DEBUG $NO_NULL $FATAL *in );
 
-$VERSION = "0.071";   # misnamed 0.07 0.007! so there is no 0.07 per se
+$VERSION = "0.075";   # misnamed 0.07 0.007! so there is no 0.07 per se
 # you can hard code the global variable settings here if you want.
 # warning - do not delete the unless defined $VAR part unless you
 # want to permanently remove the ability to change the variable.
@@ -128,7 +128,6 @@ sub new {
     $class = ref($class) || $class;
     my $self  = {};
     bless $self, $class;
-
     $self->_initialize_mod_perl($init) if $self->_mod_perl;
     $self->_initialize_globals;
     $self->_store_globals;
@@ -203,27 +202,40 @@ sub _initialize {
 
 sub _read_parse {
     my $self = shift;
-    my $data;
+    my $data = '';
     my $type    = $ENV{'CONTENT_TYPE'}   || 'No CONTENT_TYPE received';
     my $length  = $ENV{'CONTENT_LENGTH'} || 0;
     my $method  = $ENV{'REQUEST_METHOD'} || 'No REQUEST_METHOD received';
     if ( $length and $type =~ m|^multipart/form-data|i ) {
         my $got_length = $self->_parse_multipart;
-        $self->cgi_error( "500 Bad read! wanted $length, got $got_length" )
+        $self->cgi_error( "500 Bad read on multipart/form-data! wanted $length, got $got_length" )
             unless $length == $got_length;
       return;
     }
     elsif ( $method eq 'POST') {
-        if ( $self->{'.globals'}->{'POST_MAX'} != -1 and $length > $self->{'.globals'}->{'POST_MAX'} ) {
-            $self->cgi_error( "413 Request entity too large: $length bytes on STDIN exceeds \$POST_MAX!" );
-          return;
-        } elsif ( $length ) {
-            read( STDIN, $data, $length ) if defined $length and $length > 0;
-            $data ||= ''; # prevent warnings
+        if ( $length ) {
+            # we may not get all the data we want with a single read on large
+            # POSTs as it may not be here yet! Credit Jason Luther for patch
+            # CGI.pm < 2.99 suffers from same bug
+            sysread( STDIN, $data, $length );
+            while ( length($data) < $length ) {
+              last unless sysread( STDIN, my $buffer, 4096 );
+                $data .= $buffer;
+            }
             unless ( $length == length $data ) {
-                $self->cgi_error( "500 Bad read! wanted $length, got ".(length $data) );
+                $self->cgi_error( "500 Bad read on POST! wanted $length, got ".(length $data) );
               return;
             }
+        }
+        # we do this test after the read so we strip the data from STDIN
+        if ( $self->{'.globals'}->{'POST_MAX'} != -1 and $length > $self->{'.globals'}->{'POST_MAX'} ) {
+            $self->cgi_error( "413 Request entity too large: $length bytes on STDIN exceeds \$POST_MAX!" );
+            # silently discard data
+            while ( $length > 0 ) {
+              last unless sysread( STDIN, my $buffer, 4096 );
+                $length -= length($buffer);
+            }
+          return;
         }
     }
     elsif ( $method eq 'GET' or $method eq 'HEAD' ) {
@@ -299,25 +311,30 @@ sub _parse_multipart {
     $boundary = quotemeta $boundary;
     my $got_data = 0;
     my $data = '';
+    my $length  = $ENV{'CONTENT_LENGTH'} || 0;
     my $CRLF = $self->crlf;
+
 READ:
-    while ( my $read = _read_data() ) {
-        $data .= $read;
-        $got_data += length $read;
+
+    while ( $got_data < $length ) {
+      last READ unless sysread( STDIN, my $buffer, 4096 );
+        $data .= $buffer;
+        $got_data += length $buffer;
+
     BOUNDARY:
+
         while ( $data =~ m/^$boundary$CRLF/ ) {
-          # get header, delimited by first two CRLFs we see
           next READ unless $data =~ m/^([\040-\176$CRLF]+?$CRLF$CRLF)/o;
             my $header = $1;
-            (my $unfold = $1) =~ s/$CRLF\s+/ /og; # unfold header per RFC822
+            (my $unfold = $1) =~ s/$CRLF\s+/ /og;
             my ($param) = $unfold =~ m/form-data;\s+name="?([^\";]*)"?/;
             my ($filename) = $unfold =~ m/name="?\Q$param\E"?;\s+filename="?([^\"]*)"?/;
             if (defined $filename ) {
                 my ($mime) = $unfold =~ m/Content-Type:\s+([-\w\/]+)/io;
-                $data =~ s/^\Q$header\E//; # trim off header
-                ( $got_data, $data, my $fh, my $size ) =
-                    $self->_save_tmpfile( $boundary, $filename, $got_data, $data );
+                $data =~ s/^\Q$header\E//;
+                ( $got_data, $data, my $fh, my $size ) = $self->_save_tmpfile( $boundary, $filename, $got_data, $data );
                 $self->_add_param( $param, $filename );
+                $self->{'.upload_fields'}->{$param}  = $filename;
                 $self->{'.filehandles'}->{$filename} = $fh if $fh;
                 $self->{'.tmpfiles'}->{$filename} = {'size'=>$size, 'mime'=>$mime } if $size;
               next BOUNDARY;
@@ -333,6 +350,7 @@ sub _save_tmpfile {
     my ( $self, $boundary, $filename, $got_data, $data ) = @_;
     my $fh;
     my $CRLF = $self->crlf;
+    my $length  = $ENV{'CONTENT_LENGTH'} || 0;
     my $file_size = 0;
     if ( $self->{'.globals'}->{'DISABLE_UPLOADS'} ) {
         $self->cgi_error("405 Not Allowed - File uploads are disabled");
@@ -348,14 +366,11 @@ sub _save_tmpfile {
     # data from STDIN. if either uploads are disabled or no file has been sent
     # $fh will be undef so only do file stuff if $fh is true using $fh && syntax
     $fh && binmode $fh;
-    while (1) {
+    while ( $got_data < $length ) {
+
         my $buffer = $data;
-        $data = _read_data() || '';
-        $got_data += length $data;
-        if ( "$buffer$data" =~ m/$boundary/ ) {
-             $data = $buffer.$data;
-           last;
-        }
+      last unless sysread( STDIN, $data, 4096 );
+
         # fixed hanging bug if browser terminates upload part way through
         # thanks to Brandon Black
         unless ( $data ) {
@@ -363,6 +378,13 @@ sub _save_tmpfile {
             undef $fh;
           return $got_data;
         }
+
+        $got_data += length $data;
+        if ( "$buffer$data" =~ m/$boundary/ ) {
+             $data = $buffer.$data;
+           last;
+        }
+
         # we do not have partial boundary so print to file if valid $fh
         $fh && print $fh $buffer;
         $file_size += length $buffer;
@@ -371,11 +393,6 @@ sub _save_tmpfile {
     $fh && print $fh $1;   # print remainder of file if valid $fh
     $file_size += length $1;
   return $got_data, $data, $fh, $file_size;
-}
-
-sub _read_data {
-   read ( STDIN, my $buffer, 4096 );
- return $buffer;
 }
 
 # Define the CRLF sequence.  You can't use a simple "\r\n" because of system
@@ -421,7 +438,7 @@ sub param {
 ###############  You can not use Selfloader and the __DATA__    ###############
 ###############   token under mod_perl, so comment token out    ###############
 
-__DATA__
+#__DATA__
 
 # a new method that provides access to a new internal routine. Useage:
 # $q->add_param( $param, $value, $overwrite )
@@ -516,6 +533,14 @@ sub upload {
         return $self->{'.filehandles'} ? keys %{$self->{'.filehandles'}}: ();
     }
     my $fh = $self->{'.filehandles'}->{$filename};
+    # allow use of upload fieldname to get filehandle
+    # this has limitation that in the envent of duplicate
+    # upload field names there can only be one filehandle
+    # which will point to the last upload file
+    # access by filename does not suffer from this issue.
+    $fh = $self->{'.filehandles'}->{$self->{'.upload_fields'}->{$filename}}
+      if ! $fh and defined $self->{'.upload_fields'}->{$filename};
+
     if ( $fh ) {
         seek $fh, 0, 0; # get ready for reading
       return $fh unless $writefile;
@@ -535,6 +560,11 @@ sub upload {
         $self->cgi_error("No filehandle for '$filename'. Are uploads enabled (\$DISABLE_UPLOADS = 0)? Is \$POST_MAX big enough?");
       return undef;
     }
+}
+
+sub upload_fieldnames {
+    my ( $self ) = @_;
+  return wantarray ? (keys %{$self->{'.upload_fields'}}) : [keys %{$self->{'.upload_fields'}}];
 }
 
 # return the file size of an uploaded file
@@ -1620,6 +1650,18 @@ simplified to:
 As you can see upload will accept an optional second argument and will write
 the file to this file path. It will return 1 for success and undef if it
 fails. If it fails you can get the error from B<cgi_error>
+
+You can also use just the fieldname as an argument to upload ie:
+
+    $fh = $q->upload( 'upload_field_name' );
+
+    or
+
+    $ok = $q->upload( 'upload_field_name', '/path/to/write/file.name' );
+
+BUT there is a catch. If you have multiple upload fields, all called
+'upload_field_name' then you will only get the last uploaded file from
+these fields.
 
 =head3 upload_info() Get the details about uploaded files
 

@@ -2,7 +2,7 @@
 <HEAD>
 <TITLE>Simple.pm</TITLE>
 <LINK REL="stylesheet" HREF="../html/docs.css" TYPE="text/css">
-<LINK REV="made" HREF="mailto:">
+<LINK REV="made" HREF="mailto:root@devel3.smartsurf.org">
 </HEAD>
 
 <BODY>
@@ -717,6 +717,16 @@ simplified to:</P>
 <P>As you can see upload will accept an optional second argument and will write
 the file to this file path. It will return 1 for success and undef if it
 fails. If it fails you can get the error from <STRONG>cgi_error</STRONG></P>
+<P>You can also use just the fieldname as an argument to upload ie:</P>
+<PRE>
+    $fh = $q-&gt;upload( 'upload_field_name' );</PRE>
+<PRE>
+    or</PRE>
+<PRE>
+    $ok = $q-&gt;upload( 'upload_field_name', '/path/to/write/file.name' );</PRE>
+<P>BUT there is a catch. If you have multiple upload fields, all called
+'upload_field_name' then you will only get the last uploaded file from
+these fields.</P>
 <P>
 <H3><A NAME="upload_info() get the details about uploaded files"><CODE>upload_info()</CODE> Get the details about uploaded files</A></H3>
 <P>The <STRONG>upload_info()</STRONG> method is a new method. Called without arguments it
