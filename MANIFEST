@@ -4,6 +4,8 @@ Changes
 Makefile.PL
 README
 Simple.pm
+speed.txt
+stubber.pl
 misc/check.pl
 misc/make_manifest.pl
 misc/sub_diffs.pl

@@ -1,6 +1,7 @@
 package CGI::Simple::Util;
 use strict;
 use vars qw( $VERSION @EXPORT_OK @ISA $UTIL );
+$VERSION = '0.002';
 require Exporter;
 @ISA = qw( Exporter );
 @EXPORT_OK = qw( rearrange make_attributes expires
@@ -17,17 +18,18 @@ sub rearrange {
     }
     # map parameters into positional indices
     my $i = 0;
-    for my $param (@$order) {
-        $pos{lc($_)} = $i for ( (ref $param) ? @$param : $param );
+    for (@$order) {
+        for (ref($_) eq 'ARRAY' ? @$_ : $_) { $pos{lc($_)} = $i; }
         $i++;
     }
-    $#result = $#$order;  # preextend, or leftovers may be in wrong position
+    $#result = $#$order;  # preextend
     while (@params) {
-        (my $key = lc shift @params ) =~ s/^-//;
+        my $key = lc(shift(@params));
+        $key =~ s/^\-//;
         if (exists $pos{$key}) {
-            $result[$pos{$key}] = shift @params;
+            $result[$pos{$key}] = shift(@params);
         } else {
-            $leftover{$key} = shift @params;
+            $leftover{$key} = shift(@params);
         }
     }
     push  @result, make_attributes( \%leftover, 1 ) if %leftover;
@@ -198,7 +200,7 @@ sub utf8_chr ($) {
     }
     elsif ($c < 0x80000000) {
       return sprintf("%c%c%c%c%c%c",
-                               0xfe |  ($c >> 30),
+                               0xfc |  ($c >> 30),  # was 0xfe patch Thomas L. Shinnick
                                0x80 | (($c >> 24) & 0x3f),
                                0x80 | (($c >> 18) & 0x3f),
                                0x80 | (($c >> 12) & 0x3f),

@@ -32,4 +32,18 @@ Revision history for Perl extension CGI::Simple.
     - Removed another new bug relating to test scripts rather than core code
       thanks to the combined effors of Perlmonks tommyw, grinder, Jaap, vek,
       erasei, jlongino and strider_corinth
+0.07 Sat Aug 2 2003
+    - i admit to abject slackness, but anyway finally allocated a few hours
+      to apply a number of bug fixes which are (in no particular order)
+    - mod_perl compliant, patched by Mathew Albright
+        - still need to comment out use Selfloader and __DATA__ token
+        - still thinking about other solutions to this
+    - Blessed globs now possible in the constructor thanks to chromatic
+    - Unicode error  0xfe |  ($c >> 30) -> 0xfc | ($c >>30 ) fixed thanks to
+      Thomas L. Shinnick
+    - s/$value ||= 0/$value = defined $value ? $value : ''/ in raw_fetch() method
+      in Cookie.pm to allow value 0.
+    - Added missing $VERSION to Util.pm
+    - Added P3P support as suggested by Marc Bauer (parallels CGI.pm)
+        - updated header() and redirect() methods in Simple.pm
 

@@ -9,11 +9,11 @@ use vars qw( $VERSION $USE_CGI_PM_DEFAULTS $DISABLE_UPLOADS $POST_MAX
              $NO_UNDEF_PARAMS $USE_PARAM_SEMICOLONS $HEADERS_ONCE
              $NPH $DEBUG $NO_NULL $FATAL *in );
 
+$VERSION = "0.007";
 # you can hard code the global variable settings here if you want.
 # warning - do not delete the unless defined $VAR part unless you
 # want to permanently remove the ability to change the variable.
 sub _initialize_globals {
-    $VERSION = "0.06";
     # set this to 1 to use CGI.pm default global settings
     $USE_CGI_PM_DEFAULTS = 0 unless defined $USE_CGI_PM_DEFAULTS;
     # see if user wants old  CGI.pm defaults
@@ -128,18 +128,51 @@ sub new {
     $class = ref($class) || $class;
     my $self  = {};
     bless $self, $class;
-    Apache->request->register_cleanup( \&CGI::Simple::_initialize_globals )
-        if $self->{'.mod_perl'} and defined Apache->request;
+
+    $self->_initialize_mod_perl($init) if $self->_mod_perl;
     $self->_initialize_globals;
     $self->_store_globals;
     $self->_initialize($init);
   return $self;
 }
 
+sub _mod_perl {
+  return (exists $ENV{MOD_PERL} or
+    ($ENV{GATEWAY_INTERFACE} and $ENV{GATEWAY_INTERFACE} =~ m{^CGI-Perl/}));
+}
+
+sub _initialize_mod_perl {
+    my ( $self, $init ) = @_;
+
+    eval "require mod_perl";
+
+    if (defined $mod_perl::VERSION) {
+      my $r = Apache->request;
+
+      if ($mod_perl::VERSION >= 1.99) {
+        $self->{'.mod_perl'} = 2;
+        require Apache::RequestRec;
+        require Apache::RequestUtil;
+        require APR::Pool;
+
+        if (defined $r) {
+          $r->subprocess_env unless exists $ENV{REQUEST_METHOD};
+          $r->pool->cleanup_register( \&CGI::Simple::_initialize_globals );
+        }
+      } else {
+        $self->{'.mod_perl'} = 1;
+        require Apache;
+        $r->register_cleanup( \&CGI::Simple::_initialize_globals )
+          if defined $r;
+      }
+    }
+}
+
 sub DESTROY { my $self = shift; undef $self; }
 
 sub _initialize {
     my ( $self, $init ) = @_;
+
     if ( ! defined $init ) {
         $self->_read_parse; # initialize from QUERY_STRING, STDIN or @ARGV
     }
@@ -148,7 +181,9 @@ sub _initialize {
             $self->_add_param( $param, $init->{$param} );
         }
     }
-    elsif ( (ref $init) =~ m/GLOB/i ) { # initialize from a file
+    # chromatic's blessed GLOB patch
+    # elsif ( (ref $init) =~ m/GLOB/i ) { # initialize from a file
+    elsif ( UNIVERSAL::isa( $init, 'GLOB' ) ) { # initialize from a file
         $self->_init_from_file($init);
     }
     elsif ( (ref $init) eq 'CGI::Simple' ) { # initialize from a CGI::Simple object
@@ -164,9 +199,6 @@ sub _initialize {
     else {
         $self->_parse_params($init);     # initialize from a query string
     }
-    # set special handler for Doug MacEachern's modperl
-    do { $| = 1; require Apache; $self->{'.mod_perl'} = 1 }
-        if ( $ENV{'GATEWAY_INTERFACE'} and $ENV{'GATEWAY_INTERFACE'} =~ /^CGI-Perl\// );
 }
 
 sub _read_parse {
@@ -196,8 +228,7 @@ sub _read_parse {
     }
     elsif ( $method eq 'GET' or $method eq 'HEAD' ) {
         $data = $self->{'.mod_perl'} ? Apache->request->args :
-                    $ENV{'QUERY_STRING'} || $ENV{'REDIRECT_QUERY_STRING'} || '';
-
+          $ENV{'QUERY_STRING'} || $ENV{'REDIRECT_QUERY_STRING'} || '';
     }
     else {
         unless ( $self->{'.globals'}->{'DEBUG'} and $data = $self->read_from_cmdline() ) {
@@ -274,7 +305,7 @@ READ:
         $data .= $read;
         $got_data += length $read;
     BOUNDARY:
-        while ( $data =~ m/^$boundary$CRLF/o ) {
+        while ( $data =~ m/^$boundary$CRLF/ ) {
           # get header, delimited by first two CRLFs we see
           next READ unless $data =~ m/^([\040-\176$CRLF]+?$CRLF$CRLF)/o;
             my $header = $1;
@@ -641,16 +672,17 @@ sub header {
     require CGI::Simple::Util;
     my @header;
   return undef if $self->{'.header_printed'}++ and $self->{'.globals'}->{'HEADERS_ONCE'};
-    my($type,$status,$cookie,$target,$expires,$nph,$charset,$attachment,@other) =
+    my($type,$status,$cookie,$target,$expires,$nph,$charset,$attachment,$p3p,@other) =
         CGI::Simple::Util::rearrange([['TYPE','CONTENT_TYPE','CONTENT-TYPE'],
             'STATUS',['COOKIE','COOKIES'],'TARGET','EXPIRES','NPH','CHARSET',
-            'ATTACHMENT'], @params );
+            'ATTACHMENT','P3P'], @params );
     $nph ||= $self->{'.globals'}->{'NPH'};
     $charset = $self->charset($charset); # get charset (and set new charset if supplied)
     # rearrange() was designed for the HTML portion, so we need to fix it up a little.
-    foreach (@other) {
-      next unless my( $header, $value ) = /([^\s=]+)=\"?(.+?)\"?$/;
-        $_ = ucfirst(lc $header) . ': ' . unescapeHTML( 1, $value );
+    for (@other) {
+        # Don't use \s because of perl bug 21951
+        next unless my($header,$value) = /([^ \r\n\t=]+)=\"?(.+?)\"?$/;
+        ($_ = $header) =~ s/^(\w)(.*)/"\u$1\L$2" . ': '.$self->unescapeHTML($value)/e;
     }
     $type ||= 'text/html' unless defined $type;
     $type .= "; charset=$charset" if $type and $type =~ m!^text/! and $type !~ /\bcharset\b/;
@@ -659,6 +691,10 @@ sub header {
     push @header, "Server: " . server_software() if $nph;
     push @header, "Status: $status" if $status;
     push @header, "Window-Target: $target" if $target;
+    if ($p3p) {
+       $p3p = join ' ',@$p3p if ref($p3p) eq 'ARRAY';
+       push(@header,qq(P3P: policyref="/w3c/p3p.xml", CP="$p3p"));
+    }
     # push all the cookies -- there may be several
     if ($cookie) {
         my @cookie = ref $cookie eq 'ARRAY' ? @{$cookie} : $cookie;
@@ -706,7 +742,7 @@ sub redirect {
     require CGI::Simple::Util;
     my( $url, $target, $cookie, $nph, @other ) =
         CGI::Simple::Util::rearrange([['LOCATION','URI','URL'],
-            'TARGET','COOKIE','NPH'],@params);
+            'TARGET',['COOKIE','COOKIES'],'NPH'],@params);
     $url ||= $self->self_url;
     my @o;
     for (@other) { tr/\"//d; push @o, split "=", $_, 2; }
@@ -714,7 +750,9 @@ sub redirect {
     unshift @o,'-Target'=>$target if $target;
     unshift @o,'-Cookie'=>$cookie if $cookie;
     unshift @o,'-Type'=>'';
-  return $self->header(@o);
+    my @unescaped;
+    unshift(@unescaped,'-Cookie'=>$cookie) if $cookie;
+  return $self->header((map {$self->unescapeHTML($_)} @o),@unescaped);
 }
 
 ################# Server Push Methods #################
@@ -1065,6 +1103,8 @@ CGI::Simple - A Simple totally OO CGI interface that is CGI.pm compliant
                             -attachment => 'foo.gif',
                             -Cost       => '$2.00'
                         );
+    # a p3p header (OK for redirect use as well)
+    $header = $q->header( -p3p => 'policyref="http://somesite.com/P3P/PolicyReferences.xml' );
 
     @cookies = $q->cookie();        # get names of all available cookies
     $value   = $q->cookie('foo')    # get first value of cookie 'foo'

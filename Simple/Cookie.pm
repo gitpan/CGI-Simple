@@ -12,7 +12,7 @@ package CGI::Simple::Cookie;
 
 use strict;
 use vars '$VERSION';
-$VERSION = '0.01';
+$VERSION = '0.02';
 use CGI::Simple::Util qw(rearrange unescape escape);
 use overload '""' => \&as_string, 'cmp' => \&compare, 'fallback'=>1;
 
@@ -53,7 +53,9 @@ sub raw_fetch {
     for my $pair (@pairs) {
         $pair =~ s/^\s+|\s+$//; # trim leading trailing whitespace
         my( $key, $value ) = split "=", $pair;
-        $value ||= '';
+        # fixed bug that does not allow 0 as a cookie value thanks Jose Mico
+        # $value ||= 0;
+        $value = defined $value ? $value : '';
         $results{$key} = $value;
     }
   return wantarray ? %results : \%results;

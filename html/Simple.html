@@ -283,7 +283,9 @@
                             -charset    =&gt; 'utf-7',
                             -attachment =&gt; 'foo.gif',
                             -Cost       =&gt; '$2.00'
-                        );</PRE>
+                        );
+    # a p3p header (OK for redirect use as well)
+    $header = $q-&gt;header( -p3p =&gt; 'policyref=&quot;<A HREF="http://somesite.com/P3P/PolicyReferences.xml">http://somesite.com/P3P/PolicyReferences.xml</A>' );</PRE>
 <PRE>
     @cookies = $q-&gt;cookie();        # get names of all available cookies
     $value   = $q-&gt;cookie('foo')    # get first value of cookie 'foo'

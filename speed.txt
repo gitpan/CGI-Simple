@@ -1,0 +1,75 @@
+C:\>type load.pl
+my ($start, $end, $cgitime, $simpletime);
+my $n = 200;
+
+$start = time;
+do{require CGI; undef %INC} for 1..$n;
+$end = time;
+$cgitime = $end - $start;
+print "Loading CGI $n times takes $cgitime seconds\n";
+
+$start = time;
+do{require CGI::Simple; undef %INC} for 1..$n;
+$end = time;
+$simpletime = $end - $start;
+print "Loading CGI::Simple $n times takes $simpletime seconds\n";
+
+C:\>perl load.pl
+Loading CGI 200 times takes 15 seconds
+Loading CGI::Simple 200 times takes 10 seconds
+
+C:\>
+
+C:\>type extract.pl
+use Benchmark;
+use CGI qw/:cgi /;
+use CGI::Simple;
+$ENV{'QUERY_STRING'} = 'foo=bar&baz=boo';
+timethese(100000, { 'CGI'    => '$q = new CGI; $q->param("baz")',
+                   'Simple' => '$s = new CGI::Simple; $s->param("baz")'});
+
+timethese(100000, { 'CGI'    => '$q = new CGI; $q->param("baz") for 1..10',
+                   'Simple' => '$s = new CGI::Simple; $s->param("baz") for 1..10
+'});
+C:\>perl extract.pl
+Benchmark: timing 100000 iterations of CGI, Simple...
+       CGI: 21 wallclock secs (21.09 usr +  0.00 sys = 21.09 CPU) @ 4740.46/s (n
+=100000)
+    Simple: 11 wallclock secs (10.88 usr +  0.00 sys = 10.88 CPU) @ 9195.40/s (n
+=100000)
+Benchmark: timing 100000 iterations of CGI, Simple...
+       CGI: 32 wallclock secs (31.98 usr +  0.00 sys = 31.98 CPU) @ 3126.56/s (n
+=100000)
+    Simple: 15 wallclock secs (14.91 usr +  0.00 sys = 14.91 CPU) @ 6708.71/s (n
+=100000)
+
+C:\>
+
+C:\>type load-extract.pl
+use Benchmark;
+
+$ENV{'QUERY_STRING'} = 'foo=bar&baz=boo';
+
+$cgi_code = <<'CODE';
+%INC = ('Benchmark.pm' => 'C:/Perl/lib/Benchmark.pm');
+require CGI;
+$q = new CGI;
+$q->param("baz") for 1..10;
+CODE
+
+$simp_code = <<'CODE';
+%INC = ('Benchmark.pm' => 'C:/Perl/lib/Benchmark.pm');
+require CGI::Simple;
+$q = new CGI::Simple;
+$q->param("baz") for 1..10;
+CODE
+
+timethese(500, { 'CGI' => $cgi_code, 'Simple' => $simp_code });
+C:\>perl load-extract.pl
+Benchmark: timing 500 iterations of CGI, Simple...
+       CGI: 39 wallclock secs (35.02 usr +  3.47 sys = 38.49 CPU) @ 12.99/s (n=
+00)
+    Simple: 25 wallclock secs (21.88 usr +  2.72 sys = 24.59 CPU) @ 20.33/s (n=
+00)
+
+C:\>
