@@ -9,7 +9,7 @@ use vars qw( $VERSION $USE_CGI_PM_DEFAULTS $DISABLE_UPLOADS $POST_MAX
              $NO_UNDEF_PARAMS $USE_PARAM_SEMICOLONS $HEADERS_ONCE
              $NPH $DEBUG $NO_NULL $FATAL *in );
 
-$VERSION = "0.007";
+$VERSION = "0.071";   # misnamed 0.07 0.007! so there is no 0.07 per se
 # you can hard code the global variable settings here if you want.
 # warning - do not delete the unless defined $VAR part unless you
 # want to permanently remove the ability to change the variable.

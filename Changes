@@ -46,4 +46,8 @@ Revision history for Perl extension CGI::Simple.
     - Added missing $VERSION to Util.pm
     - Added P3P support as suggested by Marc Bauer (parallels CGI.pm)
         - updated header() and redirect() methods in Simple.pm
+0.071 Sat Aug 2 2003
+    - Oops, changed $VERSION to 0.007 not 0.07 so have to change to 0.071 to
+      upload again. ;-)
+    - no significant changes since 0.07 (aka 0.007) ;-)
 
