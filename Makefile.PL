@@ -1,8 +1,13 @@
 use ExtUtils::MakeMaker;
-# See lib/ExtUtils/MakeMaker.pm for details of how to influence
-# the contents of the Makefile that is written.
+
 WriteMakefile(
     'NAME'            => 'CGI::Simple',
-    'VERSION_FROM'    => 'Simple.pm', # finds $VERSION
-    'PREREQ_PM'       => {}, # e.g., Module::Name => 1.1
+    'VERSION_FROM'    => 'Simple.pm',
+    'PREREQ_PM'       => {},
+    'MAN3PODS'        => {
+        'Simple.pm'           => '$(INST_MAN3DIR)/CGI::Simple.$(MAN3EXT)',
+        'Simple/Cookie.pm'    => '$(INST_MAN3DIR)/CGI::Simple::Cookie.$(MAN3EXT)',
+        'Simple/Standard.pm'  => '$(INST_MAN3DIR)/CGI::Simple::Standard.$(MAN3EXT)',
+        'Simple/Util.pm'      => '$(INST_MAN3DIR)/CGI::Simple::Util.$(MAN3EXT)',
+    },
 );

@@ -2,7 +2,7 @@
 <HEAD>
 <TITLE>Util.pm</TITLE>
 <LINK REL="stylesheet" HREF="../html/docs.css" TYPE="text/css">
-<LINK REV="made" HREF="mailto:root@devel3.smartsurf.org">
+<LINK REV="made" HREF="mailto:">
 </HEAD>
 
 <BODY>
@@ -17,45 +17,45 @@
 
 <UL>
 
-    <UL>
-
-        <LI><A HREF="#name">NAME</A></LI>
-        <LI><A HREF="#synopsis">SYNOPSIS</A></LI>
-        <LI><A HREF="#description">DESCRIPTION</A></LI>
-        <LI><A HREF="#author information">AUTHOR INFORMATION</A></LI>
-        <LI><A HREF="#see also">SEE ALSO</A></LI>
-    </UL>
-
+    <LI><A HREF="#name">NAME</A></LI>
+    <LI><A HREF="#synopsis">SYNOPSIS</A></LI>
+    <LI><A HREF="#description">DESCRIPTION</A></LI>
+    <LI><A HREF="#author information">AUTHOR INFORMATION</A></LI>
+    <LI><A HREF="#see also">SEE ALSO</A></LI>
 </UL>
 <!-- INDEX END -->
 
 <HR>
 <P>
-<H2><A NAME="name">NAME</A></H2>
+<H1><A NAME="name">NAME</A></H1>
 <P>CGI::Util - Internal utilities used by CGI::Simple module</P>
 <P>
-<H2><A NAME="synopsis">SYNOPSIS</A></H2>
+<HR>
+<H1><A NAME="synopsis">SYNOPSIS</A></H1>
 <PRE>
     $escaped     = escapeHTML('In HTML you need to escape &lt; &gt; &quot; and &amp; chars');
     $unescaped   = unescapeHTML('&amp;lt;&amp;gt;&amp;quot;&amp;amp;');
     $url_encoded = escape($string);
     $decoded     = unescape($url_encoded);</PRE>
 <P>
-<H2><A NAME="description">DESCRIPTION</A></H2>
+<HR>
+<H1><A NAME="description">DESCRIPTION</A></H1>
 <P>CGI::Simple::Util contains essentially non public subroutines used by
 CGI::Simple. There are HTML and URL escape and unescape routines that may
 be of some use.</P>
 <P>An internal object is used to store a number of system specific details to
 enable the escape routines to be accurate.</P>
 <P>
-<H2><A NAME="author information">AUTHOR INFORMATION</A></H2>
+<HR>
+<H1><A NAME="author information">AUTHOR INFORMATION</A></H1>
 <P>Original version copyright 1995-1998, Lincoln D. Stein.  All rights reserved.</P>
 <P>This version copyright 2001, Dr James Freeman.</P>
 <P>This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.</P>
 <P>Address bug reports and comments to: <A HREF="mailto:jfreeman@tassie.net.au">jfreeman@tassie.net.au</A></P>
 <P>
-<H2><A NAME="see also">SEE ALSO</A></H2>
+<HR>
+<H1><A NAME="see also">SEE ALSO</A></H1>
 <P><A HREF="/CGI/Simple.html">the CGI::Simple manpage</A></P>
 <TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0 WIDTH=100%>
 <TR><TD CLASS=block VALIGN=MIDDLE WIDTH=100% BGCOLOR="#cccccc">

@@ -2,7 +2,7 @@
 <HEAD>
 <TITLE>Standard.pm</TITLE>
 <LINK REL="stylesheet" HREF="../html/docs.css" TYPE="text/css">
-<LINK REV="made" HREF="mailto:root@devel3.smartsurf.org">
+<LINK REV="made" HREF="mailto:">
 </HEAD>
 
 <BODY>
@@ -17,37 +17,34 @@
 
 <UL>
 
+    <LI><A HREF="#name">NAME</A></LI>
+    <LI><A HREF="#synopsis">SYNOPSIS</A></LI>
+    <LI><A HREF="#description">DESCRIPTION</A></LI>
     <UL>
 
-        <LI><A HREF="#name">NAME</A></LI>
-        <LI><A HREF="#synopsis">SYNOPSIS</A></LI>
-        <LI><A HREF="#description">DESCRIPTION</A></LI>
-        <UL>
-
-            <LI><A HREF="#autoloading">Autoloading</A></LI>
-            <LI><A HREF="#specified export">Specified Export</A></LI>
-            <LI><A HREF="#mix and match">Mix and Match</A></LI>
-        </UL>
-
-        <LI><A HREF="#$post_max and $disable_uploads">$POST_MAX and $DISABLE_UPLOADS</A></LI>
-        <LI><A HREF="#export">EXPORT</A></LI>
-        <LI><A HREF="#function details">FUNCTION DETAILS</A></LI>
-        <LI><A HREF="#bugs">BUGS</A></LI>
-        <LI><A HREF="#author">AUTHOR</A></LI>
-        <LI><A HREF="#credits">CREDITS</A></LI>
-        <LI><A HREF="#see also">SEE ALSO</A></LI>
+        <LI><A HREF="#autoloading">Autoloading</A></LI>
+        <LI><A HREF="#specified export">Specified Export</A></LI>
+        <LI><A HREF="#mix and match">Mix and Match</A></LI>
     </UL>
 
+    <LI><A HREF="#$post_max and $disable_uploads">$POST_MAX and $DISABLE_UPLOADS</A></LI>
+    <LI><A HREF="#export">EXPORT</A></LI>
+    <LI><A HREF="#function details">FUNCTION DETAILS</A></LI>
+    <LI><A HREF="#bugs">BUGS</A></LI>
+    <LI><A HREF="#author">AUTHOR</A></LI>
+    <LI><A HREF="#credits">CREDITS</A></LI>
+    <LI><A HREF="#see also">SEE ALSO</A></LI>
 </UL>
 <!-- INDEX END -->
 
 <HR>
 <P>
-<H2><A NAME="name">NAME</A></H2>
+<H1><A NAME="name">NAME</A></H1>
 <P>CGI::Simple::Standard - a wrapper module for CGI::Simple that provides a
 function style interface</P>
 <P>
-<H2><A NAME="synopsis">SYNOPSIS</A></H2>
+<HR>
+<H1><A NAME="synopsis">SYNOPSIS</A></H1>
 <PRE>
     use CGI::Simple::Standard qw( -autoload );
     use CGI::Simple::Standard qw( :core :cookie :header :misc );
@@ -126,12 +123,13 @@ function style interface</P>
 <PRE>
     dienice( cgi_error() ) if cgi_error();</PRE>
 <P>
-<H2><A NAME="description">DESCRIPTION</A></H2>
+<HR>
+<H1><A NAME="description">DESCRIPTION</A></H1>
 <P>This module is a wrapper for the completely object oriented CGI::Simple
 module and provides a simple functional style interface. It provides two
 different methods to import function names into your namespace.</P>
 <P>
-<H3><A NAME="autoloading">Autoloading</A></H3>
+<H2><A NAME="autoloading">Autoloading</A></H2>
 <P>If you specify the '-autoload' pragma like this:</P>
 <PRE>
     use CGI::Simple::Standard qw( -autoload );</PRE>
@@ -146,7 +144,7 @@ will initialize a CGI::Simple object and then apply the requested method
 (if it exists) to it. A fatal exception will be thrown if you try to use an
 undefined method (function).</P>
 <P>
-<H3><A NAME="specified export">Specified Export</A></H3>
+<H2><A NAME="specified export">Specified Export</A></H2>
 <P>Alternatively you can specify the functions you wish to import. You can do
 this on a per function basis like this:</P>
 <PRE>
@@ -190,11 +188,12 @@ functionality. You specify the import of some function groups like this:</P>
 <P>use CGI::Simple::Standard qw( :core :cookie :header );</P>
 <P>Note that the function groups all start with a : char.</P>
 <P>
-<H3><A NAME="mix and match">Mix and Match</A></H3>
+<H2><A NAME="mix and match">Mix and Match</A></H2>
 <P>You can use the '-autoload' pragma, specifically named function imports and
 tag group imports together if you desire.</P>
 <P>
-<H2><A NAME="$post_max and $disable_uploads">$POST_MAX and $DISABLE_UPLOADS</A></H2>
+<HR>
+<H1><A NAME="$post_max and $disable_uploads">$POST_MAX and $DISABLE_UPLOADS</A></H1>
 <P>If you wish to set $POST_MAX or $DISABLE_UPLOADS you must do this *after* the
 use statement and *before* the first function call as shown in the synopsis.</P>
 <P>Unlike CGI.pm uploads are disabled by default and the maximum acceptable
@@ -209,7 +208,8 @@ specifying the '-default' pragma in your use statement.</P>
 <PRE>
     use CGI::Simple::Standard qw( -default ..... );</PRE>
 <P>
-<H2><A NAME="export">EXPORT</A></H2>
+<HR>
+<H1><A NAME="export">EXPORT</A></H1>
 <P>Nothing by default.</P>
 <P>Under the '-autoload' pragma the AUTOLOAD subroutine is
 exported into the calling namespace. Additional subroutines are only imported
@@ -220,7 +220,8 @@ then stubs of these functions are exported into the calling namespace. These
 stub functions will be replaced with the real functions only if you actually
 call them saving wasted compilation effort.</P>
 <P>
-<H2><A NAME="function details">FUNCTION DETAILS</A></H2>
+<HR>
+<H1><A NAME="function details">FUNCTION DETAILS</A></H1>
 <P>This is a wrapper module for CGI::Simple. Virtually all the methods available
 in the OO interface are available via the functional interface. Several
 method names are aliased to prevent namespace conflicts:</P>
@@ -244,20 +245,24 @@ to re-initialize your underlying object.</P>
 <P>For full details of the available functions see the CGI::Simple docs. Just
 remove the $q-&gt; part and use the method name directly.</P>
 <P>
-<H2><A NAME="bugs">BUGS</A></H2>
+<HR>
+<H1><A NAME="bugs">BUGS</A></H1>
 <P>As this is 0.01 there are almost bound to be some.</P>
 <P>
-<H2><A NAME="author">AUTHOR</A></H2>
+<HR>
+<H1><A NAME="author">AUTHOR</A></H1>
 <P>Dr James Freeman &lt;<A HREF="mailto:jfreeman@tassie.net.au">jfreeman@tassie.net.au</A>&gt;</P>
 <P>This package is free software and is provided ``as is'' without express or
 implied warranty. It may be used, redistributed and/or modified under the terms
 of the Perl Artistic License (see <A HREF="http://www.perl.com/perl/misc/Artistic.html)">http://www.perl.com/perl/misc/Artistic.html)</A></P>
 <P>
-<H2><A NAME="credits">CREDITS</A></H2>
+<HR>
+<H1><A NAME="credits">CREDITS</A></H1>
 <P>The interface and key sections of the CGI::Simple code come from
 CGI.pm by Lincoln Stein.</P>
 <P>
-<H2><A NAME="see also">SEE ALSO</A></H2>
+<HR>
+<H1><A NAME="see also">SEE ALSO</A></H1>
 <P><A HREF="#cgi::simple which is the back end for this module">CGI::Simple which is the back end for this module</A>,
 <STRONG>CGI.pm by Lincoln Stein</STRONG></P>
 <TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0 WIDTH=100%>

@@ -2,7 +2,7 @@
 <HEAD>
 <TITLE>Cookie.pm</TITLE>
 <LINK REL="stylesheet" HREF="../html/docs.css" TYPE="text/css">
-<LINK REV="made" HREF="mailto:root@devel3.smartsurf.org">
+<LINK REV="made" HREF="mailto:">
 </HEAD>
 
 <BODY>
@@ -17,34 +17,31 @@
 
 <UL>
 
+    <LI><A HREF="#name">NAME</A></LI>
+    <LI><A HREF="#synopsis">SYNOPSIS</A></LI>
+    <LI><A HREF="#description">DESCRIPTION</A></LI>
+    <LI><A HREF="#using cgi::simple::cookie">USING CGI::Simple::Cookie</A></LI>
     <UL>
 
-        <LI><A HREF="#name">NAME</A></LI>
-        <LI><A HREF="#synopsis">SYNOPSIS</A></LI>
-        <LI><A HREF="#description">DESCRIPTION</A></LI>
-        <LI><A HREF="#using cgi::simple::cookie">USING CGI::Simple::Cookie</A></LI>
-        <UL>
-
-            <LI><A HREF="#creating new cookies">Creating New Cookies</A></LI>
-            <LI><A HREF="#sending the cookie to the browser">Sending the Cookie to the Browser</A></LI>
-            <LI><A HREF="#recovering previous cookies">Recovering Previous Cookies</A></LI>
-            <LI><A HREF="#manipulating cookies">Manipulating Cookies</A></LI>
-        </UL>
-
-        <LI><A HREF="#author information">AUTHOR INFORMATION</A></LI>
-        <LI><A HREF="#bugs">BUGS</A></LI>
-        <LI><A HREF="#see also">SEE ALSO</A></LI>
+        <LI><A HREF="#creating new cookies">Creating New Cookies</A></LI>
+        <LI><A HREF="#sending the cookie to the browser">Sending the Cookie to the Browser</A></LI>
+        <LI><A HREF="#recovering previous cookies">Recovering Previous Cookies</A></LI>
+        <LI><A HREF="#manipulating cookies">Manipulating Cookies</A></LI>
     </UL>
 
+    <LI><A HREF="#author information">AUTHOR INFORMATION</A></LI>
+    <LI><A HREF="#bugs">BUGS</A></LI>
+    <LI><A HREF="#see also">SEE ALSO</A></LI>
 </UL>
 <!-- INDEX END -->
 
 <HR>
 <P>
-<H2><A NAME="name">NAME</A></H2>
+<H1><A NAME="name">NAME</A></H1>
 <P>CGI::Cookie - Interface to Netscape Cookies</P>
 <P>
-<H2><A NAME="synopsis">SYNOPSIS</A></H2>
+<HR>
+<H1><A NAME="synopsis">SYNOPSIS</A></H1>
 <PRE>
     use CGI::Simple::Standard qw(header);
     use CGI::Simple::Cookie;</PRE>
@@ -64,7 +61,8 @@
     # create cookies returned from an external source
     %cookies = parse CGI::Simple::Cookie($ENV{COOKIE});</PRE>
 <P>
-<H2><A NAME="description">DESCRIPTION</A></H2>
+<HR>
+<H1><A NAME="description">DESCRIPTION</A></H1>
 <P>CGI::Simple::Cookie is an interface to Netscape (HTTP/1.1) cookies, an
 innovation that allows Web servers to store persistent information on
 the browser's side of the connection.  Although CGI::Simple::Cookie is
@@ -74,7 +72,8 @@ used by it internally), you can use this module independently.</P>
 <PRE>
     <A HREF="http://www.ics.uci.edu/pub/ietf/http/rfc2109.txt">http://www.ics.uci.edu/pub/ietf/http/rfc2109.txt</A></PRE>
 <P>
-<H2><A NAME="using cgi::simple::cookie">USING CGI::Simple::Cookie</A></H2>
+<HR>
+<H1><A NAME="using cgi::simple::cookie">USING CGI::Simple::Cookie</A></H1>
 <P>CGI::Simple::Cookie is object oriented.  Each cookie object has a name
 and a value.  The name is any scalar value.  The value is any scalar or
 array value (associative arrays are also allowed).  Cookies also have
@@ -120,7 +119,7 @@ If the ``secure'' attribute is set, the cookie will only be sent to your
 script if the CGI request is occurring on a secure channel, such as SSL.
 <P></P></OL>
 <P>
-<H3><A NAME="creating new cookies">Creating New Cookies</A></H3>
+<H2><A NAME="creating new cookies">Creating New Cookies</A></H2>
 <PRE>
     $c = new CGI::Simple::Cookie( -name    =&gt;  'foo',
                                   -value   =&gt;  'bar',
@@ -147,7 +146,7 @@ pages at your site.</P>
 <P><STRONG>-secure</STRONG> if set to a true value instructs the browser to return the
 cookie only when a cryptographic protocol is in use.</P>
 <P>
-<H3><A NAME="sending the cookie to the browser">Sending the Cookie to the Browser</A></H3>
+<H2><A NAME="sending the cookie to the browser">Sending the Cookie to the Browser</A></H2>
 <P>Within a CGI script you can send a cookie to the browser by creating
 one or more Set-Cookie: fields in the HTTP header.  Here is a typical
 sequence:</P>
@@ -177,7 +176,7 @@ representation.  You may call <CODE>as_string()</CODE> yourself if you prefer:</
 <PRE>
     print &quot;Set-Cookie: &quot;,$c-&gt;as_string,&quot;\n&quot;;</PRE>
 <P>
-<H3><A NAME="recovering previous cookies">Recovering Previous Cookies</A></H3>
+<H2><A NAME="recovering previous cookies">Recovering Previous Cookies</A></H2>
 <PRE>
     %cookies = fetch CGI::Simple::Cookie;</PRE>
 <P><STRONG>fetch</STRONG> returns an associative array consisting of all cookies
@@ -200,7 +199,7 @@ form using the <CODE>parse()</CODE> class method:</P>
        $COOKIES = `cat /usr/tmp/Cookie_stash`;
        %cookies = parse CGI::Simple::Cookie($COOKIES);</PRE>
 <P>
-<H3><A NAME="manipulating cookies">Manipulating Cookies</A></H3>
+<H2><A NAME="manipulating cookies">Manipulating Cookies</A></H2>
 <P>Cookie objects have a series of accessor methods to get and set cookie
 attributes.  Each accessor has a similar syntax.  Called without
 arguments, the accessor returns the current value of the attribute.
@@ -237,17 +236,20 @@ Get or set the cookie's path.
 Get or set the cookie's expiration time.
 <P></P></DL>
 <P>
-<H2><A NAME="author information">AUTHOR INFORMATION</A></H2>
+<HR>
+<H1><A NAME="author information">AUTHOR INFORMATION</A></H1>
 <P>Original version copyright 1997-1998, Lincoln D. Stein.  All rights reserved.</P>
 <P>This verson copyright 2001, Dr James Freeman.</P>
 <P>This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.</P>
 <P>Address bug reports and comments to: <A HREF="mailto:jfreeman@tassie.net.au">jfreeman@tassie.net.au</A></P>
 <P>
-<H2><A NAME="bugs">BUGS</A></H2>
+<HR>
+<H1><A NAME="bugs">BUGS</A></H1>
 <P>This section intentionally left blank :-)</P>
 <P>
-<H2><A NAME="see also">SEE ALSO</A></H2>
+<HR>
+<H1><A NAME="see also">SEE ALSO</A></H1>
 <P><A HREF="/CGI/Carp.html">the CGI::Carp manpage</A>, <A HREF="/CGI/Simple.html">the CGI::Simple manpage</A></P>
 <TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0 WIDTH=100%>
 <TR><TD CLASS=block VALIGN=MIDDLE WIDTH=100% BGCOLOR="#cccccc">

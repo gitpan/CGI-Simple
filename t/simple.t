@@ -610,7 +610,7 @@ $ENV{'CONTENT_TYPE'} = 'application/x-www-form-urlencoded';
 
 # upload() - invalid CONTENT_TYPE
 print "Testing: upload() - invalid CONTENT_TYPE\n" if $debug;
-$sv = $q->upload();
+$sv = $q->upload('foo');
 ok ( $sv, undef );    # test 174
 ok ( $q->cgi_error(), 'Oops! File uploads only work if you specify ENCTYPE="multipart/form-data" in your <FORM> tag' );    # test 175
 
@@ -963,7 +963,9 @@ print "Testing: cgi_error()\n" if $debug;
 $ENV{'REQUEST_METHOD'} = 'GET';
 $ENV{'QUERY_STRING'} = '';
 $q = CGI::Simple->new;
-ok( $q->cgi_error, qr/400 No data received via method: GET/ );    # test 242
+# we have changes this behaviour
+# ok( $q->cgi_error, qr/400 No data received via method: GET/ );    # test 242
+ok( $q->cgi_error, undef);    # test 242
 $ENV{'QUERY_STRING'} = 'name=JaPh%2C&color=red&color=green&color=blue';
 
 

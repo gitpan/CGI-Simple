@@ -1,7 +1,7 @@
 package CGI::Simple::Util;
 use strict;
 use vars qw( $VERSION @EXPORT_OK @ISA $UTIL );
-$VERSION = '0.002';
+$VERSION = '0.03';
 require Exporter;
 @ISA = qw( Exporter );
 @EXPORT_OK = qw( rearrange make_attributes expires
@@ -338,18 +338,18 @@ BEGIN {
 
 __END__
 
-=head2 NAME
+=head1 NAME
 
 CGI::Util - Internal utilities used by CGI::Simple module
 
-=head2 SYNOPSIS
+=head1 SYNOPSIS
 
     $escaped     = escapeHTML('In HTML you need to escape < > " and & chars');
     $unescaped   = unescapeHTML('&lt;&gt;&quot;&amp;');
     $url_encoded = escape($string);
     $decoded     = unescape($url_encoded);
 
-=head2 DESCRIPTION
+=head1 DESCRIPTION
 
 CGI::Simple::Util contains essentially non public subroutines used by
 CGI::Simple. There are HTML and URL escape and unescape routines that may
@@ -358,7 +358,7 @@ be of some use.
 An internal object is used to store a number of system specific details to
 enable the escape routines to be accurate.
 
-=head2 AUTHOR INFORMATION
+=head1 AUTHOR INFORMATION
 
 Original version copyright 1995-1998, Lincoln D. Stein.  All rights reserved.
 
@@ -369,7 +369,7 @@ it under the same terms as Perl itself.
 
 Address bug reports and comments to: jfreeman@tassie.net.au
 
-=head2 SEE ALSO
+=head1 SEE ALSO
 
 L<CGI::Simple>
 

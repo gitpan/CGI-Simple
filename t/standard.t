@@ -862,7 +862,9 @@ print "Testing: cgi_error()\n" if $debug;
 $ENV{'REQUEST_METHOD'} = 'GET';
 $ENV{'QUERY_STRING'} = '';
 restore_parameters();
-ok( cgi_error(), qr/400 No data received via method: GET/ );    #221
+# changed this behaviour
+# ok( cgi_error(), qr/400 No data received via method: GET/ );    #221
+ok( cgi_error(), undef );    #221
 $ENV{'QUERY_STRING'} = 'name=JaPh%2C&color=red&color=green&color=blue';
 
 
