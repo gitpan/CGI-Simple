@@ -12,7 +12,7 @@ use strict;
 use lib qw(blib/lib blib/arch);
 
 use Test::More tests => 86;
-use CGI::Util qw(escape unescape);
+use CGI::Simple::Util qw(escape unescape);
 use POSIX qw(strftime);
 
 #-----------------------------------------------------------------------------
