@@ -1,0 +1,213 @@
+CGI/Simple version 0.01
+=======================
+
+NAME
+
+CGI::Simple - A Simple totally OO CGI interface that is CGI.pm compliant
+
+IMPORTANT NOTE
+
+This is a pre-release beta. It has a extensive test suite that proves its
+compatibility with CGI.pm but has yet to be widely tested and as such should
+not be used in a production environment. Please see the pod or the html version
+of this in the /html directory for full details.
+
+TESTING NOTE
+
+One of the test scripts in the /t dir is called concur.test It performs 158
+(at last count) concurrency tests between your currently installed CGI.pm
+and CGI::Simple.pm. This script is not automatically run during (n)make test
+as some test failures are generally expected and no one reads the README :-)
+I got sick of repeating there is a README did you READIT via email when quized
+about test failures.
+
+The typical test structure in concur.test is:
+
+$q = new CGI;
+$s = new CGI::Simple;
+$cgi  = $q->method(); # scalar context
+$simp = $s->method();
+@cgi  = $q->method(); # array context
+@simp = $s->method();
+ok ( $simp, $cgi );
+ok ( (join'',@simp), (join'',@cgi) );
+
+If you are using CGI.pm version 2.78 you should get no failures. If you are
+using earlier versions you can expect up to 13 failures (v2.43) due to various
+default changes, bug fixes and other changes in CGI.pm. You get to see the
+difference in output between the two modules. Generally it is very minor stuff.
+You run the concurrency tests like this:
+
+perl concur.test | more
+
+INSTALLATION
+
+To install this module type the following:
+
+   perl Makefile.PL
+   make
+   make test
+   make install
+
+If you insist on doing a cut an paste install you will need
+to install the following files in the locations shown:
+
+usr/lib/perl5/site_perl/5.6.0/Cgi/Simple.pm
+usr/lib/perl5/site_perl/5.6.0/Cgi/Simple/Cookie.pm
+usr/lib/perl5/site_perl/5.6.0/Cgi/Simple/Standard.pm
+usr/lib/perl5/site_perl/5.6.0/Cgi/Simple/Util.pm
+
+On Win32 you will probably need to substitute something like
+C:\Perl\site\lib\  for  usr/lib/perl5/site_perl/5.6.0/
+
+Before installing any perl module on Win32 I recommend deactivating Norton
+Antivirus which conflicts with a lot of stuff, not just Perl and MakeMaker.
+If your system hangs when you try to install modules this is a probable cause.
+
+Then just:
+
+    perl Makefile.PL
+    nmake
+    nmake test
+    nmake install
+
+You can get a copy of nmake.exe from Microsoft at
+<http://download.microsoft.com/download/vc15/Patch/1.52/W95/EN-US/Nmake15.exe>
+
+DEPENDENCIES
+
+Nothing outside standard distribution. Specifically:
+
+SelfLoader to minimise code compiled
+IO::File for file uploads (provides temp file name/filehandle)
+Data::Dumper for CGI::Simple object cloning, Dump(), PrintVariables(), and PrintEnv()
+
+SYNOPSIS
+
+    use CGI::Simple;
+    $CGI::Simple::POST_MAX = 1024;       # max upload via post default 100kB
+    $CGI::Simple::DISABLE_UPLOADS = 0;   # enable uploads
+
+    $q = new CGI::Simple;
+    $q = new CGI::Simple( { 'foo'=>'1', 'bar'=>[2,3,4] } );
+    $q = new CGI::Simple( 'foo=1&bar=2&bar=3&bar=4' );
+    $q = new CGI::Simple( \*FILEHANDLE );
+
+    $q->save( \*FILEHANDLE );   # save current object to a file as used by new
+
+    @params = $q->param;        # return all param names as a list
+    $value = $q->param('foo');  # return the first value supplied for 'foo'
+    @values = $q->param('foo'); # return all values supplied for foo
+
+    %fields   = $q->Vars;      # returns untied key value pair hash
+    $hash_ref = $q->Vars;      # or as a hash ref
+    %fields   = $q->Vars("|"); # packs multiple values with "|" rather than "\0";
+
+    @keywords = $q->keywords;  # return all keywords as a list
+
+    $q->param( 'foo', 'some', 'new', 'values' );      # set new 'foo' values
+    $q->param( -name=>'foo', -value=>'bar' );
+    $q->param( -name=>'foo', -value=>['bar','baz'] );
+
+    $q->param( 'foo', 'some', 'new', 'values' );      # append values to 'foo'
+    $q->append( -name=>'foo', -value=>'bar' );
+    $q->append( -name=>'foo', -value=>['some', 'new', 'values'] );
+
+    $q->delete('foo'); # delete param 'foo' and all its values
+    $q->delete_all;    # delete everything
+
+    <INPUT TYPE="file" NAME="upload_file" SIZE="42">
+
+    $files    = $q->upload()                # number of files uploaded
+    @files    = $q->upload();               # names of all uploaded files
+    $filename = $q->param('upload_file')    # filename of uploaded file
+    $size     = $q->upload_info($filename); # size of uploaded file
+
+    my $fh = $q->upload($filename);         # get filehandle to read from
+    while ( read( $fh, $buffer, 1024 ) ) { ... }
+
+    # short and sweet upload
+    $ok = $q->upload( $q->param('upload_file'), '/path/to/write/file.name' );
+    print "Uploaded ".$q->param('upload_file')." and wrote it OK!" if $ok;
+
+    $decoded    = $q->url_decode($encoded);
+    $encoded    = $q->url_encode($unencoded);
+    $escaped    = $q->escapeHTML('<>"&');
+    $unescaped  = $q->unescapeHTML('&lt;&gt;&quot;&amp;');
+
+    $qs = $q->query_string; # get all data in $q as a query string OK for GET
+
+    $q->no_cache(1);        # set Pragma: no-cache + expires
+    print $q->header();     # print a simple header
+    # get a complex header
+    $header = $q->header(   -type       => 'image/gif'
+                            -nph        => 1,
+                            -status     => '402 Payment required',
+                            -expires    =>'+24h',
+                            -cookie     => $cookie,
+                            -charset    => 'utf-7',
+                            -attachment => 'foo.gif',
+                            -Cost       => '$2.00'
+                        );
+
+    @cookies = $q->cookie();        # get names of all available cookies
+    $value   = $q->cookie('foo')    # get first value of cookie 'foo'
+    @value   = $q->cookie('foo')    # get all values of cookie 'foo'
+    # get a cookie formatted for header() method
+    $cookie  = $q->cookie(  -name    => 'Password',
+                            -values  => ['superuser','god','my dog woofie'],
+                            -expires => '+3d',
+                            -domain  => '.nowhere.com',
+                            -path    => '/cgi-bin/database',
+                            -secure  => 1
+                         );
+    print $q->header( -cookie=>$cookie );       # set cookie
+
+    print $q->redirect('http://go.away.now');   # print a redirect header
+
+    dienice( $q->cgi_error ) if $q->cgi_error;
+
+DESCRIPTION
+
+CGI::Simple provides a relatively lightweight drop in replacement for CGI.pm.
+It shares an identical OO interface to CGI.pm for parameter parsing, file
+upload, cookie handling and header generation. This module is entirely object
+oriented, however a complete functional interface is available by using the
+CGI::Simple::Standard module.
+
+Essentially everything in CGI.pm that relates to the CGI (not HTML) side of
+things is available. There are even a few new methods and additions to old
+ones! See the extensive pod for details. If you are interested in what has
+gone on under the hood see the Compatibility with CGI.pm section in the pod.
+
+EXPORT
+
+Nothing for object oriented interface. AUTOLOAD for method interface under
+-autoload pragma or requested methods.
+
+BUGS
+
+As this is 0.03 there are almost bound to be some. There is an extensive test
+suite and this module passes all the original CGI.pm tests which are also
+included in the /t dir.
+
+AUTHOR
+
+Dr James Freeman <jfreeman@tassie.net.au>
+
+CREDITS
+
+The entire interface and key sections of code come from CGI.pm by Lincoln Stein.
+
+SEE ALSO
+
+CGI.pm by Lincoln Stein
+
+COPYRIGHT AND LICENCE
+
+This package is free software and is provided "as is" without express or
+implied warranty. It may be used, redistributed and/or modified under the terms
+of the Perl Artistic License (see http://www.perl.com/perl/misc/Artistic.html)
+
+Copyright (C) 2001 Dr James Freeman
+

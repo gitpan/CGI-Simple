@@ -1,0 +1,19 @@
+Revision history for Perl extension CGI::Simple.
+
+0.01  Thu Nov  1 12:21:48 2001
+    - original version; created by h2xs 1.21 with options
+        -X CGI::Simple
+
+0.02 Fri Dec 21 2001
+    - added cgi_error() if upload called but CONTENT_TYPE not multipart/form-data
+    - changed inernal storage names of globals by droping $
+    - added mod_perl notes re Selfloader and __DATA__ token
+    - as per suggestions from Curtis Poe
+
+0.03 Fri Apr 12 2002
+    - modifed test so skipping fork() test is noted as such
+    - allow '0' as a valid param name
+    - renamed concur.t to concur.test so that it does not rub by default
+    - added speed tests comparing CGI.pm to CGI::Simple in  the file
+      cgi-simple_vs_cgi-pm.html in the root dir
+
