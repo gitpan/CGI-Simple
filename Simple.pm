@@ -13,7 +13,7 @@ use vars qw( $VERSION $USE_CGI_PM_DEFAULTS $DISABLE_UPLOADS $POST_MAX
 # warning - do not delete the unless defined $VAR part unless you
 # want to permanently remove the ability to change the variable.
 sub _initialize_globals {
-    $VERSION = "0.04";
+    $VERSION = "0.05";
     # set this to 1 to use CGI.pm default global settings
     $USE_CGI_PM_DEFAULTS = 0 unless defined $USE_CGI_PM_DEFAULTS;
     # see if user wants old  CGI.pm defaults
@@ -307,8 +307,10 @@ sub _save_tmpfile {
         $self->cgi_error("405 Not Allowed - File uploads are disabled");
     }
     elsif ( $filename ) {
-        eval { require IO::File; $fh = new IO::File->new_tmpfile };
-        $self->cgi_error("500 Can't create new IO::File->new_tmpfile: $@") if $@;
+        eval { require IO::File };
+        $self->cgi_error("500 IO::File is not available $@") if $@;
+        $fh = new_tmpfile IO::File;
+        $self->cgi_error("500 IO::File can't create new temp_file") unless $fh;
     }
     # read in data until closing boundary found. buffer to catch split boundary
     # we do this regardless of whether we save the file or not to read the file
@@ -323,7 +325,9 @@ sub _save_tmpfile {
              $data = $buffer.$data;
            last;
         }
-        if ( ! defined $data ) {
+        # fixed hanging bug if browser terminates upload part way through
+        # thanks to Brandon Black
+        unless ( $data ) {
             $self->cgi_error('400 Malformed multipart, no terminating boundary');
             undef $fh;
           return $got_data;
@@ -3440,6 +3444,8 @@ affected browsers as well.
 
 Lincoln D. Stein (lstein@cshl.org) and everyone else who worked on the
 original CGI.pm upon which this module is heavily based
+
+Brandon Black for some heavy duty testing and bug fixes
 
 =head2 SEE ALSO
 

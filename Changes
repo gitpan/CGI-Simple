@@ -20,3 +20,8 @@ Revision history for Perl extension CGI::Simple.
 0.04 Sat Apr 12 2002
     - test bug on Solaris reported by robc@stamps.stortek.com and fixed
 
+0.05 Wed Nov 6 2002
+    - nasty upload bug reported (with solution) by Brandon Black fixed. Perl would
+      hang if upload terminated by browser before completion
+    - also odity with IO::file fixed (Brandon Black once again)
+
