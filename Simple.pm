@@ -13,7 +13,7 @@ use vars qw( $VERSION $USE_CGI_PM_DEFAULTS $DISABLE_UPLOADS $POST_MAX
 # warning - do not delete the unless defined $VAR part unless you
 # want to permanently remove the ability to change the variable.
 sub _initialize_globals {
-    $VERSION = "0.03";
+    $VERSION = "0.04";
     # set this to 1 to use CGI.pm default global settings
     $USE_CGI_PM_DEFAULTS = 0 unless defined $USE_CGI_PM_DEFAULTS;
     # see if user wants old  CGI.pm defaults

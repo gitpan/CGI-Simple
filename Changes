@@ -17,3 +17,6 @@ Revision history for Perl extension CGI::Simple.
     - added speed tests comparing CGI.pm to CGI::Simple in  the file
       cgi-simple_vs_cgi-pm.html in the root dir
 
+0.04 Sat Apr 12 2002
+    - test bug on Solaris reported by robc@stamps.stortek.com and fixed
+
