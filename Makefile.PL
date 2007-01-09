@@ -1,13 +1,18 @@
+use strict;
+use warnings;
 use ExtUtils::MakeMaker;
 
 WriteMakefile(
-    'NAME'            => 'CGI::Simple',
-    'VERSION_FROM'    => 'Simple.pm',
-    'PREREQ_PM'       => {},
-    'MAN3PODS'        => {
-        'Simple.pm'           => '$(INST_MAN3DIR)/CGI::Simple.$(MAN3EXT)',
-        'Simple/Cookie.pm'    => '$(INST_MAN3DIR)/CGI::Simple::Cookie.$(MAN3EXT)',
-        'Simple/Standard.pm'  => '$(INST_MAN3DIR)/CGI::Simple::Standard.$(MAN3EXT)',
-        'Simple/Util.pm'      => '$(INST_MAN3DIR)/CGI::Simple::Util.$(MAN3EXT)',
+    (MM->can('signature_target') ? (SIGN => 1) : ()),
+    NAME                => 'CGI::Simple',
+    AUTHOR              => 'Andy Armstrong <andy@hexten.net>',
+    VERSION_FROM        => 'lib/CGI/Simple.pm',
+    ABSTRACT_FROM       => 'lib/CGI/Simple.pm',
+    PL_FILES            => {},
+    PREREQ_PM => {
+        'Test::More' => 0,
+        'version'    => 0,
     },
+    dist                => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
+    clean               => { FILES => 'CGI-Simple-*' },
 );

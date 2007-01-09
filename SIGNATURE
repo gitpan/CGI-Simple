@@ -1,0 +1,44 @@
+This file contains message digests of all files listed in MANIFEST,
+signed via the Module::Signature module, version 0.55.
+
+To verify the content in this distribution, first make sure you have
+Module::Signature installed, then type:
+
+    % cpansign -v
+
+It will check each file's integrity, as well as the signature's
+validity.  If "==> Signature verified OK! <==" is not displayed,
+the distribution may already have been compromised, and you should
+not run its Makefile.PL or Build.PL.
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+SHA1 c897ea8a9762207b21b276e2472f7d49d7798d51 Build.PL
+SHA1 716a59daf0d0d472544e296c639ce64db164f5be Changes
+SHA1 015bcdeececfa0c368c2e65a9abc5edf406a464b MANIFEST
+SHA1 13b1901a362a52f703c5fe6144d696ebf37d6df2 META.yml
+SHA1 19d93b8854e5cf5a1db0def52695c21049acf657 Makefile.PL
+SHA1 22ee246dc6829f6fb26633f0ca3b82c96910f49f README
+SHA1 09059c2c102de43873a899b14364c6d48efb0590 lib/CGI/Simple.pm
+SHA1 c11a05f0028eadabf5eeb2d85bc9a79324f7d138 lib/CGI/Simple/Cookie.pm
+SHA1 697db3437fc9d5eda46b75fbd2f23651b615c3f0 lib/CGI/Simple/Standard.pm
+SHA1 abff127ccec605d57e43153a0b3f1aadd14bc5b8 lib/CGI/Simple/Util.pm
+SHA1 7953ca03348ec35b5572142f00f09940ed564839 t/00.load.t
+SHA1 022782db9945503b80459f93f74a3dd27c28a64c t/20.cookie.t
+SHA1 ab681d3f81c256e5c1a13585cae0c701af3b19cf t/30.function.t
+SHA1 9cae0da2c6162a43a5f044d2f951621501da394c t/40.request.t
+SHA1 edacd71a7cc4b355847264c052d43a1efb17905d t/50.simple.t
+SHA1 c930b9af418d1dcd70c0f467c02da1ccfb9b973b t/60.slow_post.t
+SHA1 18d4c2c6dea777cddfcda15a6a426251d29f6c19 t/70.standard.t
+SHA1 bf8c9956260ae4d071f1b614b3c3cc21abfe2bab t/80.util.t
+SHA1 a768c7474a88e0bc44553e73b59fb74bdb4a8c5a t/disabled/10.concur.t
+SHA1 f90660723bad05aba6158aef31e427abfa125a72 t/disabled/pod-coverage.t
+SHA1 0190346d7072d458c8a10a45c19f86db641dcc48 t/disabled/pod.t
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.2.2 (Darwin)
+
+iD8DBQFFpBeDwoknRJZQnCERAmyeAJ476l4GULKUyV8TZ1iOb/OM3TYEjwCgyD/e
+/LK/vRDFVzE7s4FtTwW/s98=
+=mujg
+-----END PGP SIGNATURE-----

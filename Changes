@@ -81,3 +81,8 @@ Revision history for Perl extension CGI::Simple.
       to control flow was used instead but this was a serious bug. If you are reading
       this you are probably upgrading which is good.
 
+0.078 2007-01-09
+    - Maintenance release by Andy Armstrong <andy@hexten.net>
+    - Rewrote tests to use Test::More
+    - Implemented mod_perl 2 support
+
