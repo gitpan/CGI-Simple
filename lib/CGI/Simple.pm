@@ -14,7 +14,7 @@ use vars qw(
     $NPH $DEBUG $NO_NULL $FATAL *in 
 );
 
-$VERSION = "0.078";
+$VERSION = "0.079";
 
 # you can hard code the global variable settings here if you want.
 # warning - do not delete the unless defined $VAR part unless you
@@ -3802,11 +3802,6 @@ files to.
 
 Nothing.
 
-=head1 BUGS
-
-As this is 0.01 there are almost bound to be some. Not recommended for
-production use.
-
 =head1 AUTHOR INFORMATION
 
 Originally copyright 2001 Dr James Freeman E<lt>jfreeman@tassie.net.auE<gt>
@@ -3833,6 +3828,13 @@ Brandon Black for some heavy duty testing and bug fixes
 John D Robinson and Jeroen Latour for helping solve some interesting test
 failures as well as Perlmonks:
 tommyw, grinder, Jaap, vek, erasei, jlongino and strider_corinth
+
+=head1 LICENCE AND COPYRIGHT
+
+Copyright (c) 2007, Andy Armstrong C<< <andy@hexten.net> >>. All rights reserved.
+
+This module is free software; you can redistribute it and/or
+modify it under the same terms as Perl itself. See L<perlartistic>.
 
 =head1 SEE ALSO
 
