@@ -14,7 +14,7 @@ use vars qw(
     $NPH $DEBUG $NO_NULL $FATAL *in 
 );
 
-$VERSION = "0.079";
+$VERSION = "0.080";
 
 # you can hard code the global variable settings here if you want.
 # warning - do not delete the unless defined $VAR part unless you
@@ -357,7 +357,7 @@ sub _parse_params {
     }
     my @pairs = split /[&;]/, $data;
     for my $pair (@pairs) {
-        my ($param, $value) = split '=', $pair;
+        my ($param, $value) = split /=/, $pair, 2;
         next unless defined $param;
         $value = '' unless defined $value;
         $self->_add_param($self->url_decode($param),
@@ -3828,6 +3828,10 @@ Brandon Black for some heavy duty testing and bug fixes
 John D Robinson and Jeroen Latour for helping solve some interesting test
 failures as well as Perlmonks:
 tommyw, grinder, Jaap, vek, erasei, jlongino and strider_corinth
+
+Thanks for patches to:
+
+Ewan Edwards
 
 =head1 LICENCE AND COPYRIGHT
 

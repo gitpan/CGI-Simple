@@ -2,7 +2,7 @@
 # The only change is to change the use statement and change references
 # from CGI to CGI::Simple
 
-use Test::More tests => 32;
+use Test::More tests => 34;
 use strict;
 use warnings;
 use Config;
@@ -114,6 +114,9 @@ is(
     'mary had a little lamb',
     'CGI::Simple::keywords'
 );
+
+ok $q = new CGI::Simple('foo=bar=baz'), 'CGI::Simple::new(), equals in value';
+is $q->param('foo'), 'bar=baz', 'parsed parameter containing equals';
 
 ok($q = new CGI::Simple('foo=bar&foo=baz'), "CGI::Simple::new() redux");
 is($q->param('foo'), 'bar', 'CGI::Simple::param() redux');

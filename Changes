@@ -86,3 +86,6 @@ Revision history for Perl extension CGI::Simple.
     - Rewrote tests to use Test::More
     - Implemented mod_perl 2 support
 
+0.080 2007-03-30
+    - Fixed problem parsing query args containing '='. Thanks to Ewan
+      Edwards for the patch.
