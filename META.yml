@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:                CGI-Simple
-version:             0.080
+version:             0.081
 abstract:            A Simple totally OO CGI interface that is CGI.pm compliant
 license:             perl
 generated_by:        ExtUtils::MakeMaker version 6.32

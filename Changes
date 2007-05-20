@@ -89,3 +89,7 @@ Revision history for Perl extension CGI::Simple.
 0.080 2007-03-30
     - Fixed problem parsing query args containing '='. Thanks to Ewan
       Edwards for the patch.
+      
+0.081 2007-05-20
+    - Fix for sysread under mod_perl. Thanks to Joshua N Pritikin for
+      the patch.
