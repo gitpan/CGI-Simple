@@ -14,7 +14,7 @@ use vars qw(
   $NPH $DEBUG $NO_NULL $FATAL *in
 );
 
-$VERSION = "0.082";
+$VERSION = "0.83";
 
 # you can hard code the global variable settings here if you want.
 # warning - do not delete the unless defined $VAR part unless you
@@ -1404,7 +1404,7 @@ CGI::Simple - A Simple totally OO CGI interface that is CGI.pm compliant
 
 =head1 VERSION
 
-This document describes CGI::Simple version 0.082.
+This document describes CGI::Simple version 0.83.
 
 =head1 SYNOPSIS
 
