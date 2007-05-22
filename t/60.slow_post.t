@@ -18,6 +18,7 @@ SKIP: {
 
     $ENV{REQUEST_METHOD} = 'POST';
     $ENV{CONTENT_LENGTH} = 10_005;
+    $ENV{CONTENT_TYPE}   = 'application/x-www-form-urlencoded';
 
     if (open(CHILD, "|-")) {    # cparent
         print CHILD 'SLOW=';

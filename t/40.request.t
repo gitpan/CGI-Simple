@@ -2,7 +2,7 @@
 # The only change is to change the use statement and change references
 # from CGI to CGI::Simple
 
-use Test::More tests => 34;
+use Test::More tests => 38;
 use strict;
 use warnings;
 use Config;
@@ -145,6 +145,7 @@ SKIP: {
     $ENV{REQUEST_METHOD} = 'POST';
     $ENV{CONTENT_LENGTH} = length($test_string);
     $ENV{QUERY_STRING}   = 'big_balls=basketball&small_balls=golf';
+    $ENV{CONTENT_TYPE}   = 'application/x-www-form-urlencoded';
     if (open(CHILD, "|-")) {    # cparent
         print CHILD $test_string;
         close CHILD;
@@ -155,4 +156,34 @@ SKIP: {
     ok($q = new CGI::Simple, "CGI::Simple::new() from POST");
     is($q->param('weather'), 'nice', "CGI::Simple::param() from POST");
     is($q->url_param('big_balls'), 'basketball', "CGI::url_param()");
+
+    # test posting POSTDATA
+    $q->_reset_globals;
+    $test_string = '<post><game>soccer</game><game>baseball</game><weather>nice</weather></post>';
+    $ENV{REQUEST_METHOD} = 'POST';
+    $ENV{CONTENT_LENGTH} = length($test_string);
+    $ENV{QUERY_STRING}   = '';
+    $ENV{CONTENT_TYPE}   = 'text/xml';
+    if (open(CHILD,"|-")) {  # cparent
+      print CHILD $test_string;
+      close CHILD;
+      exit 0;
+    }
+    ok($q = new CGI::Simple, "CGI::Simple::new from POST");
+
+    is($q->param('POSTDATA'), $test_string, "CGI::Simple::param('POSTDATA') from POST");
+
+    # test posting PUTDATA
+    $q->_reset_globals;
+    $test_string = '<put><game>soccer</game><game>baseball</game><weather>nice</weather></put>';
+    $ENV{REQUEST_METHOD}='PUT';
+    $ENV{CONTENT_LENGTH}=length($test_string);
+    $ENV{CONTENT_TYPE}='text/xml';
+    if (open(CHILD,"|-")) {  # cparent
+      print CHILD $test_string;
+      close CHILD;
+      exit 0;
+    }
+    ok($q = new CGI::Simple, "CGI::Simple::new from PUT");
+    is($q->param('PUTDATA'), $test_string, "CGI::Simple::param('POSTDATA') from POST");
 }

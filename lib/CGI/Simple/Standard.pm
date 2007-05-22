@@ -4,8 +4,10 @@ use strict;
 use CGI::Simple;
 use Carp;
 use vars qw( $VERSION $USE_CGI_PM_DEFAULTS $DISABLE_UPLOADS $POST_MAX
-    $NO_UNDEF_PARAMS $USE_PARAM_SEMICOLONS $HEADERS_ONCE
-    $NPH $DEBUG $NO_NULL $FATAL *in %EXPORT_TAGS $AUTOLOAD );
+  $NO_UNDEF_PARAMS $USE_PARAM_SEMICOLONS $HEADERS_ONCE
+  $NPH $DEBUG $NO_NULL $FATAL *in %EXPORT_TAGS $AUTOLOAD );
+
+$VERSION = "0.082";
 
 %EXPORT_TAGS = (
     ':html'     => [qw(:misc)],
@@ -13,41 +15,41 @@ use vars qw( $VERSION $USE_CGI_PM_DEFAULTS $DISABLE_UPLOADS $POST_MAX
     ':cgi'      => [qw(:core :access)],
     ':all'      => [
         qw(:core :misc :cookie :header :push :debug :cgi-lib
-            :access :internal)
+          :access :internal)
     ],
     ':core' => [
         qw(param add_param param_fetch url_param keywords
-            append Delete delete_all Delete_all upload
-            query_string parse_query_string  parse_keywordlist
-            Vars save_parameters restore_parameters)
+          append Delete delete_all Delete_all upload
+          query_string parse_query_string  parse_keywordlist
+          Vars save_parameters restore_parameters)
     ],
-    ':misc' => [qw(url_decode url_encode escapeHTML unescapeHTML put)],
+    ':misc'   => [qw(url_decode url_encode escapeHTML unescapeHTML put)],
     ':cookie' => [qw(cookie raw_cookie)],
     ':header' => [qw(header cache no_cache redirect)],
     ':push'   => [
         qw(multipart_init multipart_start multipart_end
-            multipart_final)
+          multipart_final)
     ],
     ':debug'   => [qw(Dump as_string cgi_error _cgi_object)],
     ':cgi-lib' => [
         qw(ReadParse SplitParam MethGet MethPost MyBaseUrl MyURL
-            MyFullUrl PrintHeader HtmlTop HtmlBot PrintVariables
-            PrintEnv CgiDie CgiError Vars)
+          MyFullUrl PrintHeader HtmlTop HtmlBot PrintVariables
+          PrintEnv CgiDie CgiError Vars)
     ],
     ':ssl'    => [qw(https)],
     ':access' => [
         qw(version nph all_parameters charset crlf globals
-            auth_type content_length content_type document_root
-            gateway_interface path_translated referer remote_addr
-            remote_host remote_ident remote_user request_method
-            script_name server_name server_port server_protocol
-            server_software user_name user_agent virtual_host
-            path_info Accept http https protocol url self_url
-            state)
+          auth_type content_length content_type document_root
+          gateway_interface path_translated referer remote_addr
+          remote_host remote_ident remote_user request_method
+          script_name server_name server_port server_protocol
+          server_software user_name user_agent virtual_host
+          path_info Accept http https protocol url self_url
+          state)
     ],
     ':internal' => [
         qw(_initialize_globals _use_cgi_pm_global_settings
-            _store_globals _reset_globals)
+          _store_globals _reset_globals)
     ]
 );
 
@@ -56,59 +58,60 @@ BEGIN {
 }
 
 sub import {
-    my ($self, @args) = @_;
+    my ( $self, @args ) = @_;
     my $package = caller();
-    my (%exports, %pragmas);
-    for my $arg (@args) {
+    my ( %exports, %pragmas );
+    for my $arg ( @args ) {
         $exports{$arg}++, next if $arg =~ m/^\w+$/;
         $pragmas{$arg}++, next if $arg =~ m/^-\w+$/;
-        if ($arg =~ m/^:[-\w]+$/) {
-            if (exists $EXPORT_TAGS{$arg}) {
-                my @tags = @{$EXPORT_TAGS{$arg}};
-                for my $tag (@tags) {
+        if ( $arg =~ m/^:[-\w]+$/ ) {
+            if ( exists $EXPORT_TAGS{$arg} ) {
+                my @tags = @{ $EXPORT_TAGS{$arg} };
+                for my $tag ( @tags ) {
                     my @expanded =
-                        exists $EXPORT_TAGS{$tag}
-                        ? @{$EXPORT_TAGS{$tag}}
-                        : ($tag);
+                      exists $EXPORT_TAGS{$tag}
+                      ? @{ $EXPORT_TAGS{$tag} }
+                      : ( $tag );
                     $exports{$_}++ for @expanded;
                 }
-            } else {
+            }
+            else {
                 croak
-                    "No '$arg' tag set available for export from CGI::Simple::Standard!\n";
+                  "No '$arg' tag set available for export from CGI::Simple::Standard!\n";
             }
         }
     }
     my @exports = keys %exports;
     my %valid_exports;
-    for my $tag (@{$EXPORT_TAGS{':all'}}) {
-        $valid_exports{$_}++ for @{$EXPORT_TAGS{$tag}};
+    for my $tag ( @{ $EXPORT_TAGS{':all'} } ) {
+        $valid_exports{$_}++ for @{ $EXPORT_TAGS{$tag} };
     }
-    for (@exports) {
+    for ( @exports ) {
         croak
-            "'$_' is not an available export method from CGI::Simple::Standard!\n"
-            unless exists $valid_exports{$_};
+          "'$_' is not an available export method from CGI::Simple::Standard!\n"
+          unless exists $valid_exports{$_};
     }
     no strict 'refs';
-    if (exists $pragmas{'-autoload'}) {
+    if ( exists $pragmas{'-autoload'} ) {
 
         # hack symbol table to export our AUTOLOAD sub
         *{"${package}::AUTOLOAD"} = sub {
-            my ($caller, $sub) = $AUTOLOAD =~ m/(.*)::(\w+)$/;
-            &CGI::Simple::Standard::loader($caller, $sub, @_);
+            my ( $caller, $sub ) = $AUTOLOAD =~ m/(.*)::(\w+)$/;
+            &CGI::Simple::Standard::loader( $caller, $sub, @_ );
         };
         delete $pragmas{'-autoload'};
     }
     my @pragmas = keys %pragmas;
-    CGI::Simple->import(@pragmas) if @pragmas;
+    CGI::Simple->import( @pragmas ) if @pragmas;
 
     # export subroutine stubs for all the desired export functions
     # we will replace them in the symbol table with the real thing
     # if and when they are first called
-    for my $i (0 .. $#exports) {
+    for my $i ( 0 .. $#exports ) {
         *{"${package}::$exports[$i]"} = sub {
             my $caller = caller;
-            &CGI::Simple::Standard::loader($caller, $exports[$i], @_);
-            }
+            &CGI::Simple::Standard::loader( $caller, $exports[$i], @_ );
+          }
     }
 }
 
@@ -124,33 +127,34 @@ sub import {
     sub loader {
         my $package = shift;
         my $sub     = shift;
-        if ($sub eq '_cgi_object') {   # for debugging get at the object
-            $q = new CGI::Simple(@_) unless $q;
+        if ( $sub eq '_cgi_object' ) {    # for debugging get at the object
+            $q = new CGI::Simple( @_ ) unless $q;
             return $q;
         }
-        if (!$q or $sub eq 'restore_parameters') {
-            if ($sub eq 'restore_parameters') {
-                $q = new CGI::Simple(@_);
+        if ( !$q or $sub eq 'restore_parameters' ) {
+            if ( $sub eq 'restore_parameters' ) {
+                $q = new CGI::Simple( @_ );
                 return;
-            } else {
+            }
+            else {
                 $q = new CGI::Simple;
             }
         }
 
-   # hack the symbol table and insert the sub so we only use loader once
-   # get strict to look the other way while we use sym refs
+        # hack the symbol table and insert the sub so we only use loader once
+        # get strict to look the other way while we use sym refs
         no strict 'refs';
 
         # stop warnings screaming about redefined subs
         local $^W = 0;
 
-   # hack to ensure %in ends in right package when exported by ReadParse
-        @_ = (*{"${package}::in"}) if $sub eq 'ReadParse' and !@_;
+        # hack to ensure %in ends in right package when exported by ReadParse
+        @_ = ( *{"${package}::in"} ) if $sub eq 'ReadParse' and !@_;
 
         # write the required sub to the callers symbol table
-        *{"${package}::$sub"} = sub { $q->$sub(@_) };
+        *{"${package}::$sub"} = sub { $q->$sub( @_ ) };
 
- # now we have inserted the sub let's call it and return the results :-)
+        # now we have inserted the sub let's call it and return the results :-)
         return &{"${package}::$sub"};
     }
 }

@@ -14,7 +14,7 @@ use vars qw(
   $NPH $DEBUG $NO_NULL $FATAL *in
 );
 
-$VERSION = "0.081";
+$VERSION = "0.082";
 
 # you can hard code the global variable settings here if you want.
 # warning - do not delete the unless defined $VAR part unless you
@@ -170,7 +170,13 @@ sub new {
     $class = ref( $class ) || $class;
     my $self = {};
     bless $self, $class;
-    $self->_initialize_mod_perl() if $self->_mod_perl;
+    if ( $self->_mod_perl ) {
+        if ( $init ) {
+            $self->{'.mod_perl_request'} = $init;
+            undef $init;    # otherwise _initialize takes the wrong path
+        }
+        $self->_initialize_mod_perl();
+    }
     $self->_initialize_globals;
     $self->_store_globals;
     $self->_initialize( $init );
@@ -185,8 +191,9 @@ sub _mod_perl {
     );
 }
 
-# Return the global request object under mod_perl. For this to work on mod_perl 2
-# PerlOptions +GlobalRequest must be specified.
+# Return the global request object under mod_perl. If you use mod_perl 2
+# and you don't set PerlOptions +GlobalRequest then the request must be
+# passed in to the new() method.
 sub _mod_perl_request {
     my $self = shift;
 
@@ -194,12 +201,17 @@ sub _mod_perl_request {
 
     return unless $mp;
 
-    if ( $mp == 2 ) {
-        return Apache2::RequestUtil->request;
-    }
-    else {
-        return Apache->request;
-    }
+    my $req = $self->{'.mod_perl_request'};
+    return $req if $req;
+
+    $self->{'.mod_perl_request'} = do {
+        if ( $mp == 2 ) {
+            Apache2::RequestUtil->request;
+        }
+        else {
+            Apache->request;
+        }
+    };
 }
 
 sub _initialize_mod_perl {
@@ -305,7 +317,7 @@ sub _read_parse {
     my $method = $ENV{'REQUEST_METHOD'} || 'No REQUEST_METHOD received';
 
     # first check POST_MAX Steve Purkis pointed out the previous bug
-    if (    $method eq 'POST'
+    if (    ( $method eq 'POST' or $method eq "PUT" )
         and $self->{'.globals'}->{'POST_MAX'} != -1
         and $length > $self->{'.globals'}->{'POST_MAX'} ) {
         $self->cgi_error(
@@ -331,7 +343,7 @@ sub _read_parse {
 
         return;
     }
-    elsif ( $method eq 'POST' ) {
+    elsif ( $method eq 'POST' or $method eq 'PUT' ) {
         if ( $length ) {
 
             # we may not get all the data we want with a single read on large
@@ -348,6 +360,13 @@ sub _read_parse {
                       . length( $data ) );
                 return;
             }
+
+            if ( $type !~ m|^application/x-www-form-urlencoded| ) {
+                $self->_add_param( $method . "DATA", $data );
+            }
+            else {
+                $self->_parse_params( $data );
+            }
         }
     }
     elsif ( $method eq 'GET' or $method eq 'HEAD' ) {
@@ -357,6 +376,7 @@ sub _read_parse {
           : $ENV{'QUERY_STRING'}
           || $ENV{'REDIRECT_QUERY_STRING'}
           || '';
+        $self->_parse_params( $data );
     }
     else {
         unless ($self->{'.globals'}->{'DEBUG'}
@@ -364,17 +384,16 @@ sub _read_parse {
             $self->cgi_error( "400 Unknown method $method" );
             return;
         }
+
+        unless ( $data ) {
+            # I liked this reporting but CGI.pm does not behave like this so
+            # out it goes......
+            # $self->cgi_error("400 No data received via method: $method, type: $type");
+            return;
+        }
+    
+        $self->_parse_params( $data );
     }
-
-    unless ( $data ) {
-
-    # I liked this reporting but CGI.pm does not behave like this so
-    # out it goes......
-    # $self->cgi_error("400 No data received via method: $method, type: $type");
-        return;
-    }
-
-    $self->_parse_params( $data );
 }
 
 sub _parse_params {
@@ -1383,6 +1402,10 @@ sub state { self_url( @_ ) }    # CGI.pm synonym routine
 
 CGI::Simple - A Simple totally OO CGI interface that is CGI.pm compliant
 
+=head1 VERSION
+
+This document describes CGI::Simple version 0.082.
+
 =head1 SYNOPSIS
 
     use CGI::Simple;
@@ -1750,6 +1773,21 @@ in more detail later:
                   -or-
 
     $q->param(-name=>'foo',-value=>'the value');
+
+=head2 param() Retrieving non-application/x-www-form-urlencoded data
+
+If POSTed or PUTed data is not of type application/x-www-form-urlencoded or multipart/form-data, 
+then the data will not be processed, but instead be returned as-is in a parameter named POSTDATA
+or PUTDATA.  To retrieve it, use code like this:
+
+    my $data = $q->param( 'POSTDATA' );
+
+                  -or-
+
+    my $data = $q->param( 'PUTDATA' );
+
+(If you don't know what the preceding means, don't worry about it.  It only affects people trying
+to use CGI::Simple for REST webservices)
 
 =head2 add_param() Setting the values of a named parameter
 
@@ -3848,7 +3886,7 @@ tommyw, grinder, Jaap, vek, erasei, jlongino and strider_corinth
 
 Thanks for patches to:
 
-Ewan Edwards
+Ewan Edwards, Joshua N Pritikin, Mike Barry
 
 =head1 LICENCE AND COPYRIGHT
 

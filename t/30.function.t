@@ -125,6 +125,7 @@ SKIP: {
     $ENV{REQUEST_METHOD} = 'POST';
     $ENV{CONTENT_LENGTH} = length($test_string);
     $ENV{QUERY_STRING}   = 'big_balls=basketball&small_balls=golf';
+    $ENV{CONTENT_TYPE}   = 'application/x-www-form-urlencoded';
 
     if (open(CHILD, "|-")) {    # cparent
         print CHILD $test_string;
