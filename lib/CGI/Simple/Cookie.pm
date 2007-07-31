@@ -12,7 +12,7 @@ package CGI::Simple::Cookie;
 
 use strict;
 use vars '$VERSION';
-$VERSION = '1.1.1';
+$VERSION = '1.1.2';
 use CGI::Simple::Util qw(rearrange unescape escape);
 use overload '""' => \&as_string, 'cmp' => \&compare, 'fallback' => 1;
 
@@ -153,7 +153,7 @@ __END__
 
 =head1 NAME
 
-CGI::Cookie - Interface to Netscape Cookies
+CGI::Simple::Cookie - Interface to Netscape Cookies
 
 =head1 SYNOPSIS
 
@@ -383,7 +383,7 @@ This release by Andy Armstrong <andy@hexten.net>
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
 
-Address bug reports and comments to: jfreeman@tassie.net.au
+Address bug reports and comments to: andy@hexten.net
 
 =head1 BUGS
 

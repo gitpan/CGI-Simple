@@ -1,7 +1,7 @@
 package CGI::Simple::Util;
 use strict;
 use vars qw( $VERSION @EXPORT_OK @ISA $UTIL );
-$VERSION = '1.1.1';
+$VERSION = '1.1.2';
 require Exporter;
 @ISA       = qw( Exporter );
 @EXPORT_OK = qw(
@@ -419,7 +419,7 @@ __END__
 
 =head1 NAME
 
-CGI::Util - Internal utilities used by CGI::Simple module
+CGI::Simple::Util - Internal utilities used by CGI::Simple module
 
 =head1 SYNOPSIS
 
@@ -446,7 +446,7 @@ This release by Andy Armstrong <andy@hexten.net>
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
 
-Address bug reports and comments to: jfreeman@tassie.net.au
+Address bug reports and comments to: andy@hexten.net
 
 =head1 SEE ALSO
 
