@@ -1,7 +1,7 @@
 package CGI::Simple::Util;
 use strict;
 use vars qw( $VERSION @EXPORT_OK @ISA $UTIL );
-$VERSION = '1.1';
+$VERSION = '1.1.1';
 require Exporter;
 @ISA       = qw( Exporter );
 @EXPORT_OK = qw(
@@ -440,8 +440,8 @@ enable the escape routines to be accurate.
 =head1 AUTHOR INFORMATION
 
 Original version copyright 1995-1998, Lincoln D. Stein.  All rights reserved.
-
-This version copyright 2001, Dr James Freeman.
+Originally copyright 2001 Dr James Freeman E<lt>jfreeman@tassie.net.auE<gt>
+This release by Andy Armstrong <andy@hexten.net>
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.

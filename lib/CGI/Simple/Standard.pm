@@ -7,7 +7,7 @@ use vars qw( $VERSION $USE_CGI_PM_DEFAULTS $DISABLE_UPLOADS $POST_MAX
   $NO_UNDEF_PARAMS $USE_PARAM_SEMICOLONS $HEADERS_ONCE
   $NPH $DEBUG $NO_NULL $FATAL *in %EXPORT_TAGS $AUTOLOAD );
 
-$VERSION = "1.1";
+$VERSION = "1.1.1";
 
 %EXPORT_TAGS = (
     ':html'     => [qw(:misc)],
@@ -53,9 +53,9 @@ $VERSION = "1.1";
     ]
 );
 
-BEGIN {
-    $SIG{__DIE__} = sub { croak "Undefined Method : @_\n" }
-}
+# BEGIN {
+#     $SIG{__DIE__} = sub { croak "Undefined Method : @_\n" }
+# }
 
 sub import {
     my ( $self, @args ) = @_;

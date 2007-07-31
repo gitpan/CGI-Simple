@@ -12,7 +12,7 @@ package CGI::Simple::Cookie;
 
 use strict;
 use vars '$VERSION';
-$VERSION = '1.1';
+$VERSION = '1.1.1';
 use CGI::Simple::Util qw(rearrange unescape escape);
 use overload '""' => \&as_string, 'cmp' => \&compare, 'fallback' => 1;
 
@@ -377,8 +377,8 @@ Get or set the cookie's expiration time.
 =head1 AUTHOR INFORMATION
 
 Original version copyright 1997-1998, Lincoln D. Stein.  All rights reserved.
-
-This verson copyright 2001, Dr James Freeman.
+Originally copyright 2001 Dr James Freeman E<lt>jfreeman@tassie.net.auE<gt>
+This release by Andy Armstrong <andy@hexten.net>
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
