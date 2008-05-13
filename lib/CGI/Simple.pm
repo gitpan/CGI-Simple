@@ -14,7 +14,7 @@ use vars qw(
   $NPH $DEBUG $NO_NULL $FATAL *in
 );
 
-$VERSION = "1.103";
+$VERSION = "1.104";
 
 # you can hard code the global variable settings here if you want.
 # warning - do not delete the unless defined $VAR part unless you
@@ -299,7 +299,7 @@ sub _internal_read($\$;$) {
         $r->read( $$buffer, $len );
     }
     else {
-        sysread( STDIN, $$buffer, $len );
+        read( STDIN, $$buffer, $len );
     }
 }
 
@@ -1407,7 +1407,7 @@ CGI::Simple - A Simple totally OO CGI interface that is CGI.pm compliant
 
 =head1 VERSION
 
-This document describes CGI::Simple version 1.103.
+This document describes CGI::Simple version 1.104.
 
 =head1 SYNOPSIS
 
@@ -3580,7 +3580,6 @@ Here is a complete list of all the CGI::Simple methods.
     import
     _reset_globals
     new
-    DESTROY
     _initialize
     _read_parse
     _parse_params

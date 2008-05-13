@@ -15,20 +15,19 @@ not run its Makefile.PL or Build.PL.
 Hash: SHA1
 
 SHA1 c897ea8a9762207b21b276e2472f7d49d7798d51 Build.PL
-SHA1 e3cb06709b43915f060c57e119c5debf5c39b5d2 Changes
-SHA1 ca526bacb7202225e7d20a57f8cebc6f789bfc5d MANIFEST
-SHA1 ece48378f440469c62c6a1f88eb036fea3564d72 META.yml
+SHA1 ec7bdf725e1c7ee38340b0c96dce748972e66c79 Changes
+SHA1 272aac2d53a00db88389fe37811899c77d62dc02 MANIFEST
+SHA1 d497d0e7f3502bbdd302dc00e536dd77e849b35a META.yml
 SHA1 56a4a0bdc219dc6b2b7569b063cdfef18ad2f6a3 Makefile.PL
-SHA1 8c76b1a5e98175c9d7a212069e765c8232af733f README
-SHA1 a0faab5b3934f163bbcd560b80eb4bff1cabf285 lib/CGI/Simple.pm
-SHA1 9507da95e9a94927c9bcdfffe4cf956c9279361c lib/CGI/Simple/Cookie.pm
-SHA1 0e79f9fe1178a46ba38563cfb1fcc8d110ea5f0e lib/CGI/Simple/Standard.pm
-SHA1 785a1c9cd3ee49dc25f8ed92c55ef648e4e581bf lib/CGI/Simple/Util.pm
-SHA1 22a71e0c8ebe9d134a07ded75364b183bd439da4 session.vim
+SHA1 c052377e210834fe0241fddc21bc507e8d66a5a9 README
+SHA1 bd11525e4ea5bb3cfff26bec98f314d9f13f7a64 lib/CGI/Simple.pm
+SHA1 6cba59d29baaac6dc3b8cc53f3173c1914c9606d lib/CGI/Simple/Cookie.pm
+SHA1 0aae28607409cce701bec3fa3947c132ac08aebb lib/CGI/Simple/Standard.pm
+SHA1 ba386c609833156806d825173dba3418ef4cbba2 lib/CGI/Simple/Util.pm
 SHA1 7953ca03348ec35b5572142f00f09940ed564839 t/000.load.t
 SHA1 022782db9945503b80459f93f74a3dd27c28a64c t/020.cookie.t
 SHA1 e9130aee8ee8b84292876acc4fe89377db98c6c9 t/030.function.t
-SHA1 fd2152b7491c953300bbb11b609a43ed686d5d5d t/040.request.t
+SHA1 b56416f5b972ae82b558dfaf88f4dc150f50084c t/040.request.t
 SHA1 edacd71a7cc4b355847264c052d43a1efb17905d t/050.simple.t
 SHA1 ba9df5159bcb85a13f0926e3cf89250f4f0613a0 t/060.slow_post.t
 SHA1 18d4c2c6dea777cddfcda15a6a426251d29f6c19 t/070.standard.t
@@ -38,9 +37,9 @@ SHA1 12e9850add0d5a4b44e9c86c29c396ff0e3e91c7 t/100.set-cookie.t
 SHA1 e26819308faea3dd3bc69e6fb8c1ef4e3baf4e72 t/pod-coverage.t
 SHA1 0190346d7072d458c8a10a45c19f86db641dcc48 t/pod.t
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.7 (Darwin)
+Version: GnuPG v1.4.8 (Darwin)
 
-iD8DBQFGrpm+woknRJZQnCERAixHAJ9ef77F67lc0dHyW5B7eHiZmHb3NwCgh/cL
-b7Na10boQgguxRjQieaCs+M=
-=NtTu
+iEYEARECAAYFAkgpt08ACgkQwoknRJZQnCH/AwCfREHSd0UtFmBt2KsHanfkca8X
+siMAn0qtg6Cm0aqcQLPamxllO0I1XLuL
+=MQ5J
 -----END PGP SIGNATURE-----
