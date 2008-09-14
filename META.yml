@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:                CGI-Simple
-version:             1.105
+version:             1.106
 abstract:            A Simple totally OO CGI interface that is CGI.pm compliant
 license:             perl
 author:              
