@@ -20,4 +20,4 @@ t/090.14838.t
 t/100.set-cookie.t
 t/pod-coverage.t
 t/pod.t
-SIGNATURE                                Public-key signature (added by MakeMaker)
+SIGNATURE    Added here by Module::Build

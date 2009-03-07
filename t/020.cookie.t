@@ -4,7 +4,6 @@
 
 use Test::More tests => 86;
 use strict;
-use warnings;
 use CGI::Simple::Util qw(escape unescape);
 use POSIX qw(strftime);
 
@@ -17,7 +16,7 @@ BEGIN {
 }
 
 my @test_cookie = (
-  'foo=123; bar=qwerty; baz=wibble; qux=a1',
+  'foo=123, bar=qwerty;  baz=wib=ble ; qux=1&2&',
   'foo=123; bar=qwerty; baz=wibble;',
   'foo=vixen; bar=cow; baz=bitch; qux=politician',
   'foo=a%20phrase; bar=yes%2C%20a%20phrase; baz=%5Ewibble; qux=%27',
@@ -42,10 +41,15 @@ my @test_cookie = (
 
   my %result = CGI::Simple::Cookie->parse( $test_cookie[0] );
 
-  is( $result{foo}->value, '123',    "cookie foo is correct" );
-  is( $result{bar}->value, 'qwerty', "cookie bar is correct" );
-  is( $result{baz}->value, 'wibble', "cookie baz is correct" );
-  is( $result{qux}->value, 'a1',     "cookie qux is correct" );
+  is( $result{foo}->value, '123',     "cookie foo is correct" );
+  is( $result{bar}->value, 'qwerty',  "cookie bar is correct" );
+  is( $result{baz}->value, 'wib=ble', "cookie baz is correct" );
+  my @values = $result{qux}->value;
+  is_deeply(
+    \@values,
+    [ 1, 2, '' ],
+    "multiple values are supported including empty values."
+  );
 }
 
 #-----------------------------------------------------------------------------
