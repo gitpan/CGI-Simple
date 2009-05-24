@@ -13,7 +13,7 @@ use vars qw(
  $NPH $DEBUG $NO_NULL $FATAL *in
 );
 
-$VERSION = "1.109";
+$VERSION = "1.110";
 
 # you can hard code the global variable settings here if you want.
 # warning - do not delete the unless defined $VAR part unless you
@@ -1445,7 +1445,7 @@ CGI::Simple - A Simple totally OO CGI interface that is CGI.pm compliant
 
 =head1 VERSION
 
-This document describes CGI::Simple version 1.109.
+This document describes CGI::Simple version 1.110.
 
 =head1 SYNOPSIS
 
@@ -2190,10 +2190,7 @@ CGI.pm alias for print. $q->print('Hello World!') will print the usual
 
 =head1 HTTP COOKIES
 
-Netscape browsers versions 1.1 and higher, and all versions of
-Internet Explorer, support a so-called "cookie" designed to help
-maintain state within a browser session.  CGI.pm has several methods
-that support cookies.
+CGI.pm has several methods that support cookies.
 
 A cookie is a name=value pair much like the named parameters in a CGI
 query string.  CGI scripts create one or more cookies and send
@@ -2340,11 +2337,9 @@ simple to turn a CGI parameter into a cookie, and vice-versa:
 
 =head2 raw_cookie()
 
-Returns the HTTP_COOKIE variable, an HTTP extension implemented by
-Netscape browsers version 1.1 and higher, and all versions of Internet
-Explorer.  Cookies have a special format, and this method call just
-returns the raw form (?cookie dough).  See B<cookie()> for ways of
-setting and retrieving cooked cookies.
+Returns the HTTP_COOKIE variable. Cookies have a special format, and
+this method call just returns the raw form (?cookie dough). See
+B<cookie()> for ways of setting and retrieving cooked cookies.
 
 Called with no parameters, B<raw_cookie()> returns the packed cookie
 structure.  You can separate it into individual cookies by splitting
@@ -2725,8 +2720,7 @@ additions from Andrew Benham <adsb@bigfoot.com>
 You are also advised to put the script into NPH mode and to set $| to
 1 to avoid buffering problems.
 
-Only Netscape Navigator supports server push.
-Internet Explorer browsers do not.
+Browser support for server push is variable.
 
 Here is a simple script that demonstrates server push:
 

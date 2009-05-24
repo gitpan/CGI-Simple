@@ -1,5 +1,6 @@
 Build.PL
 Changes
+inc/MyBuilder.pm
 lib/CGI/Simple.pm
 lib/CGI/Simple/Cookie.pm
 lib/CGI/Simple/Standard.pm
@@ -18,6 +19,9 @@ t/070.standard.t
 t/080.util.t
 t/090.14838.t
 t/100.set-cookie.t
+t/110.bad-upload.t
+t/manifest.t
 t/pod-coverage.t
 t/pod.t
+t/test_file.txt
 SIGNATURE    Added here by Module::Build
