@@ -13,7 +13,7 @@ use vars qw(
  $NPH $DEBUG $NO_NULL $FATAL *in
 );
 
-$VERSION = "1.112";
+$VERSION = "1.113";
 
 # you can hard code the global variable settings here if you want.
 # warning - do not delete the unless defined $VAR part unless you
@@ -515,7 +515,7 @@ sub _parse_multipart {
        = $unfold =~ m/name="?\Q$param\E"?;\s+filename="?([^\"]*)"?/;
 
       if ( defined $filename ) {
-        my ( $mime ) = $unfold =~ m/Content-Type:\s+([-\w\/]+)/io;
+        my ( $mime ) = $unfold =~ m/Content-Type:\s+([-\w\+\.\/]+)/io;
         $data =~ s/^\Q$header\E//;
         ( $got_data, $data, my $fh, my $size )
          = $self->_save_tmpfile( $handle, $boundary, $filename,
@@ -683,12 +683,18 @@ sub keywords {
 sub Vars {
   my $self = shift;
   $self->{'.sep'} = shift || $self->{'.sep'} || "\0";
-  my ( %hash, %tied );
-  for my $param ( $self->param ) {
-    $hash{$param} = join $self->{'.sep'}, $self->param( $param );
+  if ( wantarray ) {
+    my %hash;
+    for my $param ( $self->param ) {
+      $hash{$param} = join $self->{'.sep'}, $self->param( $param );
+    }
+    return %hash;
   }
-  tie %tied, "CGI::Simple", $self;
-  return wantarray ? %hash : \%tied;
+  else {
+    my %tied;
+    tie %tied, "CGI::Simple", $self;
+    return \%tied;
+  }
 }
 
 sub TIEHASH { $_[1] ? $_[1] : new $_[0] }
@@ -986,6 +992,31 @@ sub header {
     ],
     @params
    );
+
+  my $CRLF = $self->crlf;
+
+  # CR escaping for values, per RFC 822
+  for my $header (
+    $type, $status,  $cookie,     $target, $expires,
+    $nph,  $charset, $attachment, $p3p,    @other
+   ) {
+    if ( defined $header ) {
+      # From RFC 822:
+      # Unfolding  is  accomplished  by regarding   CRLF   immediately
+      # followed  by  a  LWSP-char  as equivalent to the LWSP-char.
+      $header =~ s/$CRLF(\s)/$1/g;
+
+      # All other uses of newlines are invalid input.
+      if ( $header =~ m/$CRLF/ ) {
+        # shorten very long values in the diagnostic
+        $header = substr( $header, 0, 72 ) . '...'
+         if ( length $header > 72 );
+        die
+         "Invalid header value contains a newline not followed by whitespace: $header";
+      }
+    }
+  }
+
   $nph ||= $self->{'.globals'}->{'NPH'};
   $charset = $self->charset( $charset )
    ;    # get charset (and set new charset if supplied)
@@ -995,7 +1026,7 @@ sub header {
 
     # Don't use \s because of perl bug 21951
     next
-     unless my ( $header, $value ) = /([^ \r\n\t=]+)=\"?(.+?)\"?$/;
+     unless my ( $header, $value ) = /([^ \r\n\t=]+)=\"?(.+?)\"?$/s;
     ( $_ = $header )
      =~ s/^(\w)(.*)/"\u$1\L$2" . ': '.$self->unescapeHTML($value)/e;
   }
@@ -1042,7 +1073,6 @@ sub header {
    if $attachment;
   push @header, @other;
   push @header, "Content-Type: $type" if $type;
-  my $CRLF = $self->crlf;
   my $header = join $CRLF, @header;
   $header .= $CRLF . $CRLF;    # add the statutory two CRLFs
 
@@ -1105,7 +1135,14 @@ sub multipart_init {
   my ( $self, @p ) = @_;
   use CGI::Simple::Util qw(rearrange);
   my ( $boundary, @other ) = rearrange( ['BOUNDARY'], @p );
-  $boundary = $boundary || '------- =_aaaaaaaaaa0';
+  if ( !$boundary ) {
+    $boundary = '------- =_';
+    my @chrs = ( '0' .. '9', 'A' .. 'Z', 'a' .. 'z' );
+    for ( 1 .. 17 ) {
+      $boundary .= $chrs[ rand( scalar @chrs ) ];
+    }
+  }
+
   my $CRLF = $self->crlf;    # get CRLF sequence
   my $warning
    = "WARNING: YOUR BROWSER DOESN'T SUPPORT THIS SERVER-PUSH TECHNOLOGY.";
@@ -1450,7 +1487,7 @@ CGI::Simple - A Simple totally OO CGI interface that is CGI.pm compliant
 
 =head1 VERSION
 
-This document describes CGI::Simple version 1.112.
+This document describes CGI::Simple version 1.113.
 
 =head1 SYNOPSIS
 
@@ -3882,7 +3919,8 @@ tommyw, grinder, Jaap, vek, erasei, jlongino and strider_corinth
 
 Thanks for patches to:
 
-Ewan Edwards, Joshua N Pritikin, Mike Barry
+Ewan Edwards, Joshua N Pritikin, Mike Barry, Michael Nachbaur, Chris
+Williams, Mark Stosberg, Krasimir Berov, Yamada Masahiro
 
 =head1 LICENCE AND COPYRIGHT
 

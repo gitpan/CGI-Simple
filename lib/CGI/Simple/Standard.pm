@@ -7,7 +7,7 @@ use vars qw( $VERSION $USE_CGI_PM_DEFAULTS $DISABLE_UPLOADS $POST_MAX
  $NO_UNDEF_PARAMS $USE_PARAM_SEMICOLONS $HEADERS_ONCE
  $NPH $DEBUG $NO_NULL $FATAL *in %EXPORT_TAGS $AUTOLOAD );
 
-$VERSION = "1.112";
+$VERSION = "1.113";
 
 %EXPORT_TAGS = (
   ':html'     => [qw(:misc)],
@@ -406,7 +406,7 @@ CGI.pm by Lincoln Stein.
 
 =head1 SEE ALSO
 
-L<CGI::Simple which is the back end for this module>,
+L<CGI::Simple> which is the back end for this module,
 B<CGI.pm by Lincoln Stein>
 
 =cut

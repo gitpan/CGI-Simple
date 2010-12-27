@@ -1,31 +1,33 @@
 ---
-name: CGI-Simple
-version: 1.112
+abstract: 'A Simple totally OO CGI interface that is CGI.pm compliant'
 author:
   - 'Andy Armstrong <andy@hexten.net>'
-abstract: A Simple totally OO CGI interface that is CGI.pm compliant
+configure_requires:
+  Module::Build: 0.36
+generated_by: 'Module::Build version 0.3607'
 license: perl
-resources:
-  bugtracker: http://rt.cpan.org/NoAuth/Bugs.html?Dist=CGI-Simple
-  license: http://dev.perl.org/licenses/
-  repository: git://github.com/AndyA/CGI--Simple.git
-requires:
-  IO::Scalar: 0
-  Test::More: 0
-provides:
-  CGI::Simple:
-    file: lib/CGI/Simple.pm
-    version: 1.112
-  CGI::Simple::Cookie:
-    file: lib/CGI/Simple/Cookie.pm
-    version: 1.112
-  CGI::Simple::Standard:
-    file: lib/CGI/Simple/Standard.pm
-    version: 1.112
-  CGI::Simple::Util:
-    file: lib/CGI/Simple/Util.pm
-    version: 1.112
-generated_by: Module::Build version 0.33
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
   version: 1.4
+name: CGI-Simple
+provides:
+  CGI::Simple:
+    file: lib/CGI/Simple.pm
+    version: 1.113
+  CGI::Simple::Cookie:
+    file: lib/CGI/Simple/Cookie.pm
+    version: 1.113
+  CGI::Simple::Standard:
+    file: lib/CGI/Simple/Standard.pm
+    version: 1.113
+  CGI::Simple::Util:
+    file: lib/CGI/Simple/Util.pm
+    version: 1.113
+requires:
+  IO::Scalar: 0
+  Test::More: 0
+resources:
+  bugtracker: http://rt.cpan.org/NoAuth/Bugs.html?Dist=CGI-Simple
+  license: http://dev.perl.org/licenses/
+  repository: 'git://github.com/AndyA/CGI--Simple.git (fetch)'
+version: 1.113
