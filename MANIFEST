@@ -1,3 +1,4 @@
+.travis.yml
 Build.PL
 Changes
 inc/MyBuilder.pm
@@ -6,8 +7,7 @@ lib/CGI/Simple/Cookie.pm
 lib/CGI/Simple/Standard.pm
 lib/CGI/Simple/Util.pm
 Makefile.PL
-MANIFEST
-META.yml
+MANIFEST			This list of files
 README
 t/000.load.t
 t/020.cookie.t
@@ -27,4 +27,5 @@ t/pod-coverage.t
 t/pod.t
 t/test_file.txt
 t/upload_info.t
-SIGNATURE    Added here by Module::Build
+META.yml                                 Module YAML meta-data (added by MakeMaker)
+META.json                                Module JSON meta-data (added by MakeMaker)
